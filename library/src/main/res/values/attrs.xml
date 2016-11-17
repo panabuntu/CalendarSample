@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="eventsCalendarEventIndicatorStyle" format="enum">
+        <enum name="fill_large_indicator" value="1"/>
+        <enum name="no_fill_large_indicator" value="2"/>
+        <enum name="small_indicator" value="3"/>
+    </attr>
+    <attr name="eventsCalendarCurrentDayIndicatorStyle" format="enum">
+        <enum name="fill_large_indicator" value="1"/>
+        <enum name="no_fill_large_indicator" value="2"/>
+    </attr>
+    <attr name="eventsCalendarCurrentSelectedDayIndicatorStyle" format="enum">
+        <enum name="fill_large_indicator" value="1"/>
+        <enum name="no_fill_large_indicator" value="2"/>
+    </attr>
+    <declare-styleable name="EventsCalendarView">
+        <attr name="eventsCalendarTextSize" format="dimension"/>
+        <attr name="eventsCalendarBackgroundColor" format="color"/>
+        <attr name="eventsCalendarCurrentDayBackgroundColor" format="color"/>
+        <attr name="eventsCalendarCurrentSelectedDayBackgroundColor" format="color"/>
+        <attr name="eventsCalendarTextColor" format="color"/>
+        <attr name="eventsCalendarMultiEventIndicatorColor" format="color"/>
+        <attr name="eventsCalendarTargetHeight" format="dimension"/>
+        <attr name="eventsCalendarEventIndicatorStyle"/>
+        <attr name="eventsCalendarCurrentDayIndicator" format="boolean"/>
+        <attr name="eventsCalendarCurrentDayIndicatorStyle"/>
+        <attr name="eventsCalendarCurrentSelectedDayIndicatorStyle"/>
+        <attr name="eventsCalendarDefaultSelectedPresentDay" format="boolean"/>
+        <attr name="eventsCalendarInactiveWeekend" format="boolean"/>
+        <attr name="eventsCalendarFormat" format="enum">
+            <enum name="monthly" value="0"/>
+            <enum name="weekly" value="1"/>
+        </attr>
+    </declare-styleable>
+</resources>

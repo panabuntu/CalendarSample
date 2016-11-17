@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="backgroundColor">#ffe95451</color>
+    <color name="currentSelectedDayColor">#E57373</color>
+    <color name="currentDayColor">#B71C1C</color>
+    <color name="textColor">#fff</color>
+    <color name="multiIndicatorColor">#fff</color>
+
+</resources>
