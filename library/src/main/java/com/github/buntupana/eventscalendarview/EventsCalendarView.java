@@ -55,6 +55,7 @@ public class EventsCalendarView extends RelativeLayout {
     }
 
     private void setAttrs(AttributeSet attrs) {
+        this.attrs = attrs;
         if (attrs != null && getContext() != null) {
             TypedArray typedArray = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.EventsCalendarView, 0, 0);
             try {
