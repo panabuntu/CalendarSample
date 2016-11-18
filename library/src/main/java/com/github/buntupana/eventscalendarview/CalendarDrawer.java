@@ -4,27 +4,29 @@ package com.github.buntupana.eventscalendarview;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.util.Log;
 
 import com.github.buntupana.eventscalendarview.domain.Event;
 
 import java.util.Calendar;
 import java.util.List;
 
-import static android.R.attr.paddingLeft;
-import static android.R.attr.paddingRight;
-import static android.R.attr.screenDensity;
 import static com.github.buntupana.eventscalendarview.EventsCalendarPageView.FILL_LARGE_INDICATOR;
 import static com.github.buntupana.eventscalendarview.EventsCalendarPageView.NO_FILL_LARGE_INDICATOR;
 import static com.github.buntupana.eventscalendarview.EventsCalendarPageView.SMALL_INDICATOR;
 
 public class CalendarDrawer {
 
+    private final String TAG = CalendarDrawer.class.getSimpleName();
 
     // Sizes
     private int heightPerDay;
     private int paddingHeight;
     private int widthPerDay;
     private int paddingWidth;
+    private int paddingRight;
+    private int paddingLeft;
+    private float screenDensity = 1;
 
     //Style
     private Paint dayPaint;
@@ -55,11 +57,14 @@ public class CalendarDrawer {
     private boolean shouldShowMondayAsFirstDay;
 
 
-    public CalendarDrawer(int heightPerDay, int paddingHeight, int widthPerDay, int paddingWidth, Paint dayPaint, int calendarTextColor, boolean currentDayIndicator, int currentDayIndicatorStyle, int currentSelectedDayIndicatorStyle, int currentSelectedDayBackgroundColor, int currentDayBackgroundColor, float bigCircleIndicatorRadius, EventsContainer eventsContainer, boolean shouldDrawDaysHeader, Calendar todayCalendar, List<Integer> inactiveDays, String[] dayColumnNames, Calendar eventsCalendar, boolean shouldDrawIndicatorsBelowSelectedDays, int textHeight, int eventIndicatorStyle, float smallIndicatorRadius, int multiEventIndicatorColor, float multiDayIndicatorStrokeWidth, Calendar minDateCalendar, Calendar maxDateCalendar, boolean shouldShowMondayAsFirstDay) {
+    public CalendarDrawer(int heightPerDay, int paddingHeight, int widthPerDay, int paddingWidth, int paddingRight, int paddingLeft, float screenDensity, Paint dayPaint, int calendarTextColor, boolean currentDayIndicator, int currentDayIndicatorStyle, int currentSelectedDayIndicatorStyle, int currentSelectedDayBackgroundColor, int currentDayBackgroundColor, float bigCircleIndicatorRadius, EventsContainer eventsContainer, boolean shouldDrawDaysHeader, Calendar todayCalendar, List<Integer> inactiveDays, String[] dayColumnNames, Calendar eventsCalendar, boolean shouldDrawIndicatorsBelowSelectedDays, int textHeight, int eventIndicatorStyle, float smallIndicatorRadius, int multiEventIndicatorColor, float multiDayIndicatorStrokeWidth, Calendar minDateCalendar, Calendar maxDateCalendar, boolean shouldShowMondayAsFirstDay) {
         this.heightPerDay = heightPerDay;
         this.paddingHeight = paddingHeight;
         this.widthPerDay = widthPerDay;
         this.paddingWidth = paddingWidth;
+        this.paddingRight = paddingRight;
+        this.paddingLeft = paddingLeft;
+        this.screenDensity = screenDensity;
         this.dayPaint = dayPaint;
         this.calendarTextColor = calendarTextColor;
         this.currentDayIndicator = currentDayIndicator;
@@ -71,7 +76,6 @@ public class CalendarDrawer {
         this.eventsContainer = eventsContainer;
         this.shouldDrawDaysHeader = shouldDrawDaysHeader;
         this.todayCalendar = todayCalendar;
-
         this.inactiveDays = inactiveDays;
         this.dayColumnNames = dayColumnNames;
         this.eventsCalendar = eventsCalendar;
@@ -109,6 +113,7 @@ public class CalendarDrawer {
             float yPosition = row * heightPerDay + paddingHeight;
 
             for (int column = 0; column < dayColumnNames.length; column++) {
+                Log.d(TAG, "widthPerDay: " + widthPerDay + " paddingWidth: " + paddingWidth + " paddingLeft: " + paddingLeft + " paddingRight: " + paddingRight);
                 float xPosition = widthPerDay * column + (paddingWidth + paddingLeft + paddingRight);
 
                 if (row == 0) {
@@ -153,6 +158,7 @@ public class CalendarDrawer {
                     if (EventsCalendarPageView.isInactiveDate(aux, minDateCalendar, maxDateCalendar, inactiveDays)) {
                         dayPaint.setAlpha(127);
                     }
+                    Log.d(TAG, "day_month: " + day_month + " xPosition: " + xPosition + " yPosition: " + yPosition);
                     canvas.drawText(String.valueOf(day_month), xPosition, yPosition, dayPaint);
 
                     if (day_month != aux.getActualMaximum(Calendar.DAY_OF_MONTH)) {

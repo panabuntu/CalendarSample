@@ -262,10 +262,10 @@ public class EventsCalendarPageView extends View {
         paddingHeight = heightPerDay / 2;
         todayCalendar.setTimeInMillis(Calendar.getInstance(timeZone, locale).getTimeInMillis());
 
-        calendarDrawer = new CalendarDrawer(heightPerDay, paddingHeight, widthPerDay, paddingWidth,
-                dayPaint, calendarTextColor, currentDayIndicator, currentDayIndicatorStyle, currentSelectedDayIndicatorStyle,
+        calendarDrawer = new CalendarDrawer(heightPerDay, paddingHeight, widthPerDay, paddingWidth, paddingRight, paddingLeft,
+                screenDensity, dayPaint, calendarTextColor, currentDayIndicator, currentDayIndicatorStyle, currentSelectedDayIndicatorStyle,
                 currentSelectedDayBackgroundColor, currentDayBackgroundColor, bigCircleIndicatorRadius, eventsContainer,
-                shouldDrawDaysHeader, todayCalendar, currentCalendar, inactiveDays, dayColumnNames, eventsCalendar, shouldDrawIndicatorsBelowSelectedDays,
+                shouldDrawDaysHeader, todayCalendar, inactiveDays, dayColumnNames, eventsCalendar, shouldDrawIndicatorsBelowSelectedDays,
                 textHeight, eventIndicatorStyle, smallIndicatorRadius, multiEventIndicatorColor, multiDayIndicatorStrokeWidth,
                 minDateCalendar, maxDateCalendar, shouldShowMondayAsFirstDay);
 
@@ -343,6 +343,7 @@ public class EventsCalendarPageView extends View {
             float yPosition = row * heightPerDay + paddingHeight;
 
             for (int column = 0; column < dayColumnNames.length; column++) {
+                Log.d(TAG, "widthPerDay: " + widthPerDay + " paddingWidth: " + paddingWidth + " paddingLeft: " + paddingLeft + " paddingRight: " + paddingRight);
                 float xPosition = widthPerDay * column + (paddingWidth + paddingLeft + paddingRight);
 
                 if (row == 0) {
@@ -387,6 +388,7 @@ public class EventsCalendarPageView extends View {
                     if (isInactiveDate(aux, minDateCalendar, maxDateCalendar, inactiveDays)) {
                         dayPaint.setAlpha(127);
                     }
+                    Log.d(TAG, "day_month: " + day_month + " xPosition: " + xPosition + " yPosition: " + yPosition);
                     canvas.drawText(String.valueOf(day_month), xPosition, yPosition, dayPaint);
 
                     if (day_month != aux.getActualMaximum(Calendar.DAY_OF_MONTH)) {
