@@ -4,9 +4,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.github.buntupana.eventscalendarview.EventsCalendarPageView;
 import com.github.buntupana.eventscalendarview.domain.Event;
+import com.github.buntupana.eventscalendarview.listeners.EventsCalendarPageViewListener;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -15,6 +17,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private final String TAG = MainActivity.class.getSimpleName();
 
     private EventsCalendarPageView monthPage;
 
@@ -26,12 +30,30 @@ public class MainActivity extends AppCompatActivity {
         monthPage = (EventsCalendarPageView) findViewById(R.id.month);
 
         Calendar calendar = Calendar.getInstance();
+        Calendar minDate = Calendar.getInstance();
+        Calendar maxDate = Calendar.getInstance();
+
+        minDate.set(Calendar.DAY_OF_MONTH, 3);
+        maxDate.set(Calendar.DAY_OF_MONTH, 24);
+
 //        calendar.add(Calendar.MONTH, 1);
 
         monthPage.setCurrentDate(calendar.getTime());
         monthPage.addInactiveDays(Calendar.SUNDAY);
+        monthPage.setMinDateCalendar(minDate.getTime());
+        monthPage.setMaxDateCalendar(maxDate.getTime());
 
         addEvents(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
+        addEvents(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
+        addEvents(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
+
+        monthPage.setOnDayClickListener(new EventsCalendarPageViewListener() {
+            @Override
+            public void onDayClick(Date dateClicked) {
+                Log.d(TAG, "onDayClick: ");
+            }
+        });
+
     }
 
     private void addEvents(int month, int year) {

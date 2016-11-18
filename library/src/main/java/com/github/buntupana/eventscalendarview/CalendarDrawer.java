@@ -4,7 +4,6 @@ package com.github.buntupana.eventscalendarview;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
-import android.util.Log;
 
 import com.github.buntupana.eventscalendarview.domain.Event;
 
@@ -55,9 +54,18 @@ public class CalendarDrawer {
     private Calendar minDateCalendar;
     private Calendar maxDateCalendar;
     private boolean shouldShowMondayAsFirstDay;
+    private float xIndicatorOffset;
 
 
-    public CalendarDrawer(int heightPerDay, int paddingHeight, int widthPerDay, int paddingWidth, int paddingRight, int paddingLeft, float screenDensity, Paint dayPaint, int calendarTextColor, boolean currentDayIndicator, int currentDayIndicatorStyle, int currentSelectedDayIndicatorStyle, int currentSelectedDayBackgroundColor, int currentDayBackgroundColor, float bigCircleIndicatorRadius, EventsContainer eventsContainer, boolean shouldDrawDaysHeader, Calendar todayCalendar, List<Integer> inactiveDays, String[] dayColumnNames, Calendar eventsCalendar, boolean shouldDrawIndicatorsBelowSelectedDays, int textHeight, int eventIndicatorStyle, float smallIndicatorRadius, int multiEventIndicatorColor, float multiDayIndicatorStrokeWidth, Calendar minDateCalendar, Calendar maxDateCalendar, boolean shouldShowMondayAsFirstDay) {
+    public CalendarDrawer(int heightPerDay, int paddingHeight, int widthPerDay, int paddingWidth, int paddingRight,
+                          int paddingLeft, float screenDensity, Paint dayPaint, int calendarTextColor, boolean currentDayIndicator,
+                          int currentDayIndicatorStyle, int currentSelectedDayIndicatorStyle, int currentSelectedDayBackgroundColor,
+                          int currentDayBackgroundColor, float bigCircleIndicatorRadius, EventsContainer eventsContainer, boolean shouldDrawDaysHeader,
+                          Calendar todayCalendar, List<Integer> inactiveDays, String[] dayColumnNames, Calendar eventsCalendar,
+                          boolean shouldDrawIndicatorsBelowSelectedDays, int textHeight, int eventIndicatorStyle, float smallIndicatorRadius,
+                          int multiEventIndicatorColor, float multiDayIndicatorStrokeWidth, Calendar minDateCalendar, Calendar maxDateCalendar,
+                          boolean shouldShowMondayAsFirstDay, float xIndicatorOffset) {
+
         this.heightPerDay = heightPerDay;
         this.paddingHeight = paddingHeight;
         this.widthPerDay = widthPerDay;
@@ -88,6 +96,7 @@ public class CalendarDrawer {
         this.minDateCalendar = minDateCalendar;
         this.maxDateCalendar = maxDateCalendar;
         this.shouldShowMondayAsFirstDay = shouldShowMondayAsFirstDay;
+        this.xIndicatorOffset = xIndicatorOffset;
     }
 
     void drawMonth(Canvas canvas, Calendar monthToDrawCalendar) {
@@ -113,7 +122,6 @@ public class CalendarDrawer {
             float yPosition = row * heightPerDay + paddingHeight;
 
             for (int column = 0; column < dayColumnNames.length; column++) {
-                Log.d(TAG, "widthPerDay: " + widthPerDay + " paddingWidth: " + paddingWidth + " paddingLeft: " + paddingLeft + " paddingRight: " + paddingRight);
                 float xPosition = widthPerDay * column + (paddingWidth + paddingLeft + paddingRight);
 
                 if (row == 0) {
@@ -158,7 +166,6 @@ public class CalendarDrawer {
                     if (EventsCalendarPageView.isInactiveDate(aux, minDateCalendar, maxDateCalendar, inactiveDays)) {
                         dayPaint.setAlpha(127);
                     }
-                    Log.d(TAG, "day_month: " + day_month + " xPosition: " + xPosition + " yPosition: " + yPosition);
                     canvas.drawText(String.valueOf(day_month), xPosition, yPosition, dayPaint);
 
                     if (day_month != aux.getActualMaximum(Calendar.DAY_OF_MONTH)) {
@@ -397,9 +404,9 @@ public class CalendarDrawer {
 
     private void drawTwoEvents(Canvas canvas, float xPosition, float yPosition, List<Event> eventsList) {
         //draw fist event just left of center
-//        drawEventIndicatorCircle(canvas, xPosition + (xIndicatorOffset * -1), yPosition, eventsList.get(0).getColor());
+        drawEventIndicatorCircle(canvas, xPosition + (xIndicatorOffset * -1), yPosition, eventsList.get(0).getColor());
         //draw second event just right of center
-//        drawEventIndicatorCircle(canvas, xPosition + (xIndicatorOffset * 1), yPosition, eventsList.get(1).getColor());
+        drawEventIndicatorCircle(canvas, xPosition + (xIndicatorOffset * 1), yPosition, eventsList.get(1).getColor());
     }
 
     //draw 2 eventsByMonthAndYearMap followed by plus indicator to show there are more than 2 eventsByMonthAndYearMap
@@ -407,19 +414,19 @@ public class CalendarDrawer {
         // k = size() - 1, but since we don't want to draw more than 2 indicators, we just stop after 2 iterations so we can just hard k = -2 instead
         // we can use the below loop to draw arbitrary eventsByMonthAndYearMap based on the current screen size, for example, larger screens should be able to
         // display more than 2 evens before displaying plus indicator, but don't draw more than 3 indicators for now
-//        for (int j = 0, k = -2; j < 3; j++, k += 2) {
-//            Event event = eventsList.get(j);
-//            float xStartPosition = xPosition + (xIndicatorOffset * k);
-//            if (j == 2) {
-//                dayPaint.setColor(multiEventIndicatorColor);
-//                dayPaint.setStrokeWidth(multiDayIndicatorStrokeWidth);
-//                canvas.drawLine(xStartPosition - smallIndicatorRadius, yPosition, xStartPosition + smallIndicatorRadius, yPosition, dayPaint);
-//                canvas.drawLine(xStartPosition, yPosition - smallIndicatorRadius, xStartPosition, yPosition + smallIndicatorRadius, dayPaint);
-//                dayPaint.setStrokeWidth(0);
-//            } else {
-//                drawEventIndicatorCircle(canvas, xStartPosition, yPosition, event.getColor());
-//            }
-//        }
+        for (int j = 0, k = -2; j < 3; j++, k += 2) {
+            Event event = eventsList.get(j);
+            float xStartPosition = xPosition + (xIndicatorOffset * k);
+            if (j == 2) {
+                dayPaint.setColor(multiEventIndicatorColor);
+                dayPaint.setStrokeWidth(multiDayIndicatorStrokeWidth);
+                canvas.drawLine(xStartPosition - smallIndicatorRadius, yPosition, xStartPosition + smallIndicatorRadius, yPosition, dayPaint);
+                canvas.drawLine(xStartPosition, yPosition - smallIndicatorRadius, xStartPosition, yPosition + smallIndicatorRadius, dayPaint);
+                dayPaint.setStrokeWidth(0);
+            } else {
+                drawEventIndicatorCircle(canvas, xStartPosition, yPosition, event.getColor());
+            }
+        }
     }
 
     public void drawCalendarBackground(Canvas canvas, int calendarBackgroundColor, int width, int height) {

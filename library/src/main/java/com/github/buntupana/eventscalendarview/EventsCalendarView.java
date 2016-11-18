@@ -75,14 +75,6 @@ public class EventsCalendarView extends RelativeLayout {
         mPager = new ViewPager(getContext());
         mPager.setAdapter(mPagerAdapter);
 
-        mPreviousCalendar.setFirstDayOfWeek(Calendar.MONDAY);
-        mCurrentCalendar.setFirstDayOfWeek(Calendar.MONDAY);
-        mNextCalendar.setFirstDayOfWeek(Calendar.MONDAY);
-
-        mPreviousCalendar.setMinimalDaysInFirstWeek(1);
-        mCurrentCalendar.setMinimalDaysInFirstWeek(1);
-        mNextCalendar.setMinimalDaysInFirstWeek(1);
-
         setCurrentDate(new Date());
 
         mPagerAdapter.addView(getView(mPreviousCalendar), 0);
@@ -120,12 +112,7 @@ public class EventsCalendarView extends RelativeLayout {
     }
 
     private View getView(Calendar calendarToDraw) {
-
         return new EventsCalendarPageView(getContext(), attrs, calendarToDraw, mMinCalendar, mMaxCalendar, inactiveDays, TimeZone.getDefault(), Locale.getDefault(), null);
-//        LayoutInflater inflater = LayoutInflater.from(getContext());
-//        FrameLayout v = (FrameLayout) inflater.inflate(R.layout.one_of_my_page_layouts, null);
-//        ((TextView) v.findViewById(R.id.textView)).setText(sdf.format(Calendar.getTime()));
-//        return v;
     }
 
     private void setDates() {
