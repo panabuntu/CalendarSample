@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
                 calendarView.refresh();
             }
         });
-
     }
 
     private void addEvents(int month, int year) {
@@ -99,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
             List<Event> events = getEvents(timeInMillis, i);
 
+            calendarView.addEvents(events);
 //            mCompactCalendarViewMonthly.addEvents(events);
         }
     }

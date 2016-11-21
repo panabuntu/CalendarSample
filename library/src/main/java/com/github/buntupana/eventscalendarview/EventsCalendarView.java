@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.github.buntupana.eventscalendarview.domain.Event;
 import com.github.buntupana.eventscalendarview.listeners.EventsCalendarViewListener;
 
 import java.text.SimpleDateFormat;
@@ -31,6 +32,8 @@ public class EventsCalendarView extends RelativeLayout {
     private Calendar mCurrentCalendar = Calendar.getInstance();
     private final Calendar mPreviousCalendar = Calendar.getInstance();
     private final Calendar mNextCalendar = Calendar.getInstance();
+
+    private EventsContainer mEventsContainer;
 
     private int mCalendarUnit = Calendar.MONTH;
 
@@ -71,6 +74,9 @@ public class EventsCalendarView extends RelativeLayout {
 
     private void init() {
 
+        if(mEventsContainer == null) {
+            mEventsContainer = new EventsContainer(Calendar.getInstance(), mCalendarAttr.getCalendarFormat());
+        }
         mCalendarUnit = mCalendarAttr.getCalendarFormat() == CalendarAttr.MONTHLY ? Calendar.MONTH : Calendar.WEEK_OF_YEAR;
 
         mPagerAdapter = new DynamicViewPagerAdapter();
@@ -133,13 +139,18 @@ public class EventsCalendarView extends RelativeLayout {
     }
 
     public void refresh() {
+        for (int i = 0; i < mPagerAdapter.getCount(); i++) {
+            mPagerAdapter.removeView(mPager, i);
+        }
+        mPagerAdapter = null;
+        mPager = null;
         removeViewAt(0);
         init();
     }
 
     private View getView(Date calendarToDraw) {
         return new EventsCalendarPageView(getContext(), calendarToDraw, mMinCalendar == null ? null : mMinCalendar.getTime(),
-                mMaxCalendar == null ? null : mMaxCalendar.getTime(), inactiveDays, mTimeZone, mLocale, mCalendarAttr, mListener);
+                mMaxCalendar == null ? null : mMaxCalendar.getTime(), mEventsContainer, inactiveDays, mTimeZone, mLocale, mCalendarAttr, mListener);
     }
 
 
@@ -269,5 +280,38 @@ public class EventsCalendarView extends RelativeLayout {
         mTimeZone = timeZone;
 //        this.mEventsContainer = new EventsContainer(Calendar.getInstance(this.mTimeZone, this.mLocale), mCalendarFormat);
         // passing null will not re-init density related values - and that's ok
+    }
+
+    /**
+     * see {@link #addEvent(Event, boolean)} when adding single events
+     * or {@link #addEvents(java.util.List)}  when adding multiple events
+     *
+     * @param event
+     */
+    @Deprecated
+    public void addEvent(Event event) {
+        addEvent(event, false);
+    }
+
+    /**
+     * Adds an event to be drawn as an indicator in the calendar.
+     * If adding multiple events see {@link #addEvents(List)}} method.
+     *
+     * @param event            to be added to the calendar
+     * @param shouldInvalidate true if the view should invalidate
+     */
+    public void addEvent(Event event, boolean shouldInvalidate) {
+        mEventsContainer.addEvent(event);
+        if (shouldInvalidate) {
+            refresh();
+        }
+    }
+
+    /**
+     * Adds multiple events to the calendar and invalidates the view once all events are added.
+     */
+    public void addEvents(List<Event> events) {
+        mEventsContainer.addEvents(events);
+        refresh();
     }
 }
