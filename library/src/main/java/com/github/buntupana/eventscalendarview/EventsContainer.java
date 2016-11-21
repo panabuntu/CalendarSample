@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.buntupana.eventscalendarview.EventsCalendarView.MONTHLY;
 
 public class EventsContainer {
 
@@ -154,7 +153,7 @@ public class EventsContainer {
     private String getKeyForCalendarEvent(Calendar cal) {
         cal.setMinimalDaysInFirstWeek(1);
         String key;
-        if (CalendarFormat == MONTHLY) {
+        if (CalendarFormat == CalendarAttr.MONTHLY) {
             key = cal.get(Calendar.YEAR) + "_" + cal.get(Calendar.MONTH);
         } else {
             key = cal.get(Calendar.YEAR) + "_" + cal.get(Calendar.WEEK_OF_YEAR);

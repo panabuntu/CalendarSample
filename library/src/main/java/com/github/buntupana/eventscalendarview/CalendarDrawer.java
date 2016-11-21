@@ -10,9 +10,7 @@ import com.github.buntupana.eventscalendarview.domain.Event;
 import java.util.Calendar;
 import java.util.List;
 
-import static com.github.buntupana.eventscalendarview.EventsCalendarPageView.FILL_LARGE_INDICATOR;
-import static com.github.buntupana.eventscalendarview.EventsCalendarPageView.NO_FILL_LARGE_INDICATOR;
-import static com.github.buntupana.eventscalendarview.EventsCalendarPageView.SMALL_INDICATOR;
+import static com.github.buntupana.eventscalendarview.CalendarAttr.NO_FILL_LARGE_INDICATOR;
 
 public class CalendarDrawer {
 
@@ -253,7 +251,7 @@ public class CalendarDrawer {
 
     private void drawDayCircleIndicator(int indicatorStyle, Canvas canvas, float x, float y, int color, float circleScale) {
         float strokeWidth = mDayPaint.getStrokeWidth();
-        if (indicatorStyle == NO_FILL_LARGE_INDICATOR) {
+        if (indicatorStyle == CalendarAttr.NO_FILL_LARGE_INDICATOR) {
             mDayPaint.setStrokeWidth(2 * mScreenDensity);
             mDayPaint.setStyle(Paint.Style.STROKE);
         } else {
@@ -309,7 +307,7 @@ public class CalendarDrawer {
                 boolean isCurrentSelectedDay = shouldDrawSelectedDayCircle && (selectedDayOfMonth == dayOfMonth);
 
                 if (!mCurrentDayIndicator || mShouldDrawIndicatorsBelowSelectedDays || (!mShouldDrawIndicatorsBelowSelectedDays && !isSameDayAsCurrentDay && !isCurrentSelectedDay)) {
-                    if (mEventIndicatorStyle == FILL_LARGE_INDICATOR || mEventIndicatorStyle == NO_FILL_LARGE_INDICATOR) {
+                    if (mEventIndicatorStyle == CalendarAttr.FILL_LARGE_INDICATOR || mEventIndicatorStyle == NO_FILL_LARGE_INDICATOR) {
                         Event event = eventsList.get(0);
                         drawEventIndicatorCircle(canvas, xPosition, yPosition, event.getColor());
                     } else {
@@ -360,7 +358,7 @@ public class CalendarDrawer {
                 boolean isCurrentSelectedDay = shouldDrawSelectedDayCircle && (selectedDayOfMonth == dayOfMonth);
 
                 if (mShouldDrawIndicatorsBelowSelectedDays || (!mShouldDrawIndicatorsBelowSelectedDays && !isSameDayAsCurrentDay && !isCurrentSelectedDay)) {
-                    if (mEventIndicatorStyle == FILL_LARGE_INDICATOR || mEventIndicatorStyle == NO_FILL_LARGE_INDICATOR) {
+                    if (mEventIndicatorStyle == CalendarAttr.FILL_LARGE_INDICATOR || mEventIndicatorStyle == CalendarAttr.NO_FILL_LARGE_INDICATOR) {
                         Event event = eventsList.get(0);
                         drawEventIndicatorCircle(canvas, xPosition, yPosition, event.getColor());
                     } else {
@@ -386,14 +384,14 @@ public class CalendarDrawer {
 
     private void drawEventIndicatorCircle(Canvas canvas, float x, float y, int color) {
         mDayPaint.setColor(color);
-        if (mEventIndicatorStyle == SMALL_INDICATOR) {
+        if (mEventIndicatorStyle == CalendarAttr.SMALL_INDICATOR) {
             mDayPaint.setStyle(Paint.Style.FILL);
             drawCircle(canvas, mSmallIndicatorRadius, x, y);
-        } else if (mEventIndicatorStyle == NO_FILL_LARGE_INDICATOR) {
+        } else if (mEventIndicatorStyle == CalendarAttr.NO_FILL_LARGE_INDICATOR) {
             mDayPaint.setStyle(Paint.Style.STROKE);
-            drawDayCircleIndicator(NO_FILL_LARGE_INDICATOR, canvas, x, y, color);
-        } else if (mEventIndicatorStyle == FILL_LARGE_INDICATOR) {
-            drawDayCircleIndicator(FILL_LARGE_INDICATOR, canvas, x, y, color);
+            drawDayCircleIndicator(CalendarAttr.NO_FILL_LARGE_INDICATOR, canvas, x, y, color);
+        } else if (mEventIndicatorStyle == CalendarAttr.FILL_LARGE_INDICATOR) {
+            drawDayCircleIndicator(CalendarAttr.FILL_LARGE_INDICATOR, canvas, x, y, color);
         }
     }
 

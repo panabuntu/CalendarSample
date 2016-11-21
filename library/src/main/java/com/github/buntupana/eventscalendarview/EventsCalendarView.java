@@ -1,11 +1,12 @@
 package com.github.buntupana.eventscalendarview;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
+
+import com.github.buntupana.eventscalendarview.listeners.EventsCalendarViewListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,17 +16,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static com.github.buntupana.eventscalendarview.CalendarAttr.MONTHLY;
+
 
 public class EventsCalendarView extends RelativeLayout {
 
     private final String TAG = EventsCalendarView.class.getSimpleName();
 
-    public static final int MONTHLY = 0;
-    public static final int WEEKLY = 1;
+    private CalendarAttr mCalendarAttr;
 
     private CustomViewPager mPager = null;
     private DynamicViewPagerAdapter mPagerAdapter = null;
-    private AttributeSet mAttrs;
 
     private Calendar mCurrentCalendar = Calendar.getInstance();
     private final Calendar mPreviousCalendar = Calendar.getInstance();
@@ -33,44 +34,44 @@ public class EventsCalendarView extends RelativeLayout {
 
     private int mCalendarUnit = Calendar.MONTH;
 
-    private int mCalendarFormat = MONTHLY;
-    private boolean mDefaultSelectedPresentDay = true;
+//    private int mCalendarFormat = MONTHLY;
+//    private boolean mDefaultSelectedPresentDay = true;
     private boolean shouldShowMondayAsFirstDay = true;
+
+    private EventsCalendarViewListener mListener;
 
     private Calendar mMinCalendar;
     private Calendar mMaxCalendar;
 
     private List<Integer> inactiveDays = new ArrayList<>();
 
+    private Locale mLocale = Locale.getDefault();
+    private TimeZone mTimeZone = TimeZone.getDefault();
+
+//    private int mCalendarBackgroundColor;
+
+    //---------------
+
     private SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy");
+    private SimpleDateFormat sdf2 = new SimpleDateFormat("dd MMM yyyy");
+
+    //---------------
 
     public EventsCalendarView(Context context) {
         super(context);
+        mCalendarAttr = new CalendarAttr(context, null);
         init();
     }
 
     public EventsCalendarView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setAttrs(attrs);
+        mCalendarAttr = new CalendarAttr(context, attrs);
         init();
-    }
-
-    private void setAttrs(AttributeSet attrs) {
-        mAttrs = attrs;
-        if (attrs != null && getContext() != null) {
-            TypedArray typedArray = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.EventsCalendarView, 0, 0);
-            try {
-                mCalendarFormat = typedArray.getInt(R.styleable.EventsCalendarView_eventsCalendarFormat, MONTHLY);
-                mDefaultSelectedPresentDay = typedArray.getBoolean(R.styleable.EventsCalendarView_eventsCalendarDefaultSelectedPresentDay, true);
-            } finally {
-                typedArray.recycle();
-            }
-        }
     }
 
     private void init() {
 
-        mCalendarUnit = mCalendarFormat == MONTHLY ? Calendar.MONTH : Calendar.WEEK_OF_YEAR;
+        mCalendarUnit = mCalendarAttr.getCalendarFormat() == CalendarAttr.MONTHLY ? Calendar.MONTH : Calendar.WEEK_OF_YEAR;
 
         mPagerAdapter = new DynamicViewPagerAdapter();
         mPager = new CustomViewPager(getContext());
@@ -78,47 +79,73 @@ public class EventsCalendarView extends RelativeLayout {
 
         setCurrentDate(new Date());
 
-        mPagerAdapter.addView(getView(mPreviousCalendar), 0);
-        mPagerAdapter.addView(getView(mCurrentCalendar), 1);
-        mPagerAdapter.addView(getView(mNextCalendar), 2);
+        if (mMinCalendar == null || mMinCalendar.get(mCalendarUnit) < mCurrentCalendar.get(mCalendarUnit)) {
+            mPagerAdapter.addView(getView(mPreviousCalendar.getTime()), mPagerAdapter.getCount());
+        }
+
+        mPagerAdapter.addView(getView(mCurrentCalendar.getTime()), mPagerAdapter.getCount());
+        mPager.setCurrentItem(mPagerAdapter.getCount()-1, false);
+
+        if (mMaxCalendar == null || mMaxCalendar.get(mCalendarUnit) > mCurrentCalendar.get(mCalendarUnit)) {
+            mPagerAdapter.addView(getView(mNextCalendar.getTime()), mPagerAdapter.getCount());
+        }
 
         mPagerAdapter.notifyDataSetChanged();
-        mPager.setCurrentItem(1, false);
 
         mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (mPager.getCurrentItem() == position && positionOffset == 0 && position != 1 && positionOffsetPixels == 0) {
-                    if (position == 0 && !isNextLimitReached()) {
+                if (mPager.getCurrentItem() == position && positionOffset == 0 && positionOffsetPixels == 0) {
+                    if (position == 0 && !isMinDateLimitReached()) {
 
                         mPreviousCalendar.add(mCalendarUnit, -1);
-                        mPagerAdapter.addView(getView(mPreviousCalendar), 0);
+                        Calendar aux = CalendarUtils.initCalendar(shouldShowMondayAsFirstDay, TimeZone.getDefault(), Locale.getDefault());
+                        aux.setTimeInMillis(mPreviousCalendar.getTimeInMillis());
+                        mPagerAdapter.addView(getView(mPreviousCalendar.getTime()), 0);
 
-                    } else if (position == mPager.getCurrentItem() && !isPreviousLimitReached()) {
+                    } else if (position == (mPagerAdapter.getCount() - 1) && !isMaxDateLimitReached()) {
 
                         mNextCalendar.add(mCalendarUnit, 1);
-                        mPagerAdapter.addView((getView(mNextCalendar)));
+                        Calendar aux = CalendarUtils.initCalendar(shouldShowMondayAsFirstDay, TimeZone.getDefault(), Locale.getDefault());
+                        aux.setTimeInMillis(mNextCalendar.getTimeInMillis());
+                        mPagerAdapter.addView((getView(mNextCalendar.getTime())));
+                    }
+
+                    if (position == mPager.getCurrentItem()) {
+                        mCurrentCalendar.setTime(((EventsCalendarPageView) mPagerAdapter.getView(position)).getCurrentDate());
+                        if (mListener != null) {
+                            mListener.onMonthScroll(mCurrentCalendar.getTime());
+                        }
                     }
                 }
             }
 
             @Override
-            public void onPageSelected(int position) {}
+            public void onPageSelected(int position) {
+            }
 
             @Override
-            public void onPageScrollStateChanged(int state) {}
+            public void onPageScrollStateChanged(int state) {
+            }
         });
 
         addView(mPager);
     }
 
-    private View getView(Calendar calendarToDraw) {
-        return new EventsCalendarPageView(getContext(), mAttrs, calendarToDraw, mMinCalendar, mMaxCalendar, inactiveDays, TimeZone.getDefault(), Locale.getDefault(), null);
+    public void refresh() {
+        removeViewAt(0);
+        init();
     }
+
+    private View getView(Date calendarToDraw) {
+        return new EventsCalendarPageView(getContext(), calendarToDraw, mMinCalendar == null ? null : mMinCalendar.getTime(),
+                mMaxCalendar == null ? null : mMaxCalendar.getTime(), inactiveDays, mTimeZone, mLocale, mCalendarAttr, mListener);
+    }
+
 
     private void setFirstDay(Calendar calendar) {
 
-        if (mCalendarFormat == MONTHLY) {
+        if (mCalendarAttr.getCalendarFormat() == MONTHLY) {
             calendar.set(Calendar.DAY_OF_MONTH, 1);
         } else {
             calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
@@ -133,10 +160,17 @@ public class EventsCalendarView extends RelativeLayout {
         calendar.set(Calendar.MILLISECOND, 0);
     }
 
-    public void setCurrentDate(Date date){
+    public void setCurrentDate(Date date) {
         if (date == null) {
-            mCurrentCalendar = null;
-        } else {
+            mCurrentCalendar = Calendar.getInstance();
+        }
+//        else if (mMinCalendar != null && mMinCalendar.getTimeInMillis() < date.getTime()) {
+//            throw new IllegalArgumentException("This date is less than minimal limit");
+//        } else if (mMaxCalendar != null && date.getTime() > mMaxCalendar.getTimeInMillis()) {
+//            throw new IllegalArgumentException("This date is greatest than maximum limit");
+//        }
+        else {
+
             mCurrentCalendar.setTime(date);
             resetHour(mCurrentCalendar);
             mPreviousCalendar.setTimeInMillis(mCurrentCalendar.getTimeInMillis());
@@ -146,7 +180,7 @@ public class EventsCalendarView extends RelativeLayout {
 
             setFirstDay(mPreviousCalendar);
             setFirstDay(mNextCalendar);
-            if (mDefaultSelectedPresentDay) {
+            if (mCalendarAttr.isDefaultSelectedPresentDay()) {
                 resetHour(mCurrentCalendar);
             } else {
                 setFirstDay(mCurrentCalendar);
@@ -158,25 +192,26 @@ public class EventsCalendarView extends RelativeLayout {
         if (date == null) {
             mMinCalendar = null;
         } else {
-//            mMinCalendar = CalendarUtils.initCalendar(sho)
+            mMinCalendar = CalendarUtils.initCalendar(shouldShowMondayAsFirstDay, mTimeZone, mLocale);
             mMinCalendar.setTime(date);
             resetHour(mMinCalendar);
         }
-        invalidate();
+        refresh();
     }
 
     public void setMaxDate(Date date) {
         if (date == null) {
             mMaxCalendar = null;
         } else {
+            mMaxCalendar = CalendarUtils.initCalendar(shouldShowMondayAsFirstDay, mTimeZone, mLocale);
             mMaxCalendar.setFirstDayOfWeek(Calendar.MONDAY);
             mMaxCalendar.setTime(date);
             resetHour(mMaxCalendar);
         }
-        invalidate();
+        refresh();
     }
 
-    private boolean isPreviousLimitReached() {
+    private boolean isMinDateLimitReached() {
 
         boolean result;
 
@@ -190,7 +225,7 @@ public class EventsCalendarView extends RelativeLayout {
         return result;
     }
 
-    private boolean isNextLimitReached() {
+    private boolean isMaxDateLimitReached() {
 
         boolean result;
 
@@ -203,17 +238,36 @@ public class EventsCalendarView extends RelativeLayout {
         }
         return result;
     }
+
     public void setShouldShowMondayAsFirstDay(boolean shouldShowMondayAsFirstDay) {
         this.shouldShowMondayAsFirstDay = shouldShowMondayAsFirstDay;
-//        setUseWeekDayAbbreviation(useThreeLetterAbbreviation);
-//        if (shouldShowMondayAsFirstDay) {
-//            eventsCalendar.setFirstDayOfWeek(Calendar.MONDAY);
-//            todayCalendar.setFirstDayOfWeek(Calendar.MONDAY);
-//            currentCalendar.setFirstDayOfWeek(Calendar.MONDAY);
-//        } else {
-//            eventsCalendar.setFirstDayOfWeek(Calendar.SUNDAY);
-//            todayCalendar.setFirstDayOfWeek(Calendar.SUNDAY);
-//            currentCalendar.setFirstDayOfWeek(Calendar.SUNDAY);
-//        }
+        if (shouldShowMondayAsFirstDay) {
+            mPreviousCalendar.setFirstDayOfWeek(Calendar.MONDAY);
+            mCurrentCalendar.setFirstDayOfWeek(Calendar.MONDAY);
+            mNextCalendar.setFirstDayOfWeek(Calendar.MONDAY);
+        } else {
+            mPreviousCalendar.setFirstDayOfWeek(Calendar.SUNDAY);
+            mCurrentCalendar.setFirstDayOfWeek(Calendar.SUNDAY);
+            mNextCalendar.setFirstDayOfWeek(Calendar.SUNDAY);
+        }
+        refresh();
+    }
+
+    public void setListener(EventsCalendarViewListener listener) {
+        mListener = listener;
+        invalidate();
+    }
+
+    public void setLocale(TimeZone timeZone, Locale locale) {
+        if (locale == null) {
+            throw new IllegalArgumentException("Locale cannot be null.");
+        }
+        if (timeZone == null) {
+            throw new IllegalArgumentException("TimeZone cannot be null.");
+        }
+        mLocale = locale;
+        mTimeZone = timeZone;
+//        this.mEventsContainer = new EventsContainer(Calendar.getInstance(this.mTimeZone, this.mLocale), mCalendarFormat);
+        // passing null will not re-init density related values - and that's ok
     }
 }

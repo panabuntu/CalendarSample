@@ -1,13 +1,10 @@
 package com.github.buntupana.eventscalendarview;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -30,29 +27,27 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static com.github.buntupana.eventscalendarview.EventsCalendarView.MONTHLY;
+import static com.github.buntupana.eventscalendarview.CalendarAttr.MONTHLY;
 
 
 public class EventsCalendarPageView extends View {
 
     private final String TAG = EventsCalendarPageView.class.getSimpleName();
 
-    public static final int SMALL_INDICATOR = 3;
-    public static final int FILL_LARGE_INDICATOR = 1;
-    public static final int NO_FILL_LARGE_INDICATOR = 2;
-    private static final int DAYS_IN_WEEK = 7;
-
     private GestureDetectorCompat gestureDetector;
 
     private String[] dayColumnNames;
 
+    private CalendarAttr mCalendarAttr;
+
     // Sizes
     private int mTextSize = 30;
+    private int mTargetHeight;
+
     private int mTextHeight;
     private int mTextWidth;
     private int mHeightPerDay;
     private int mWidthPerDay;
-    private int mTargetHeight;
     private int mWidth;
     private int mHeight;
     private int mPaddingRight;
@@ -66,34 +61,20 @@ public class EventsCalendarPageView extends View {
     private float mMultiDayIndicatorStrokeWidth;
     private float mScreenDensity = 1;
 
-    // Style
-    private int mEventIndicatorStyle = SMALL_INDICATOR;
-    private boolean mCurrentDayIndicator;
-    private int mCurrentDayIndicatorStyle = FILL_LARGE_INDICATOR;
-    private int mCurrentSelectedDayIndicatorStyle;
-    private boolean mDefaultSelectedPresentDay;
-    private int mCalendarFormat = MONTHLY;
-    private static boolean sShouldShowMondayAsFirstDay = true;
-    private boolean mUseThreeLetterAbbreviation = false;
-    private boolean mInactiveWeekend;
-    private boolean mShouldDrawDaysHeader = true;
     private boolean mShouldDrawIndicatorsBelowSelectedDays = false;
+    private boolean mShouldDrawDaysHeader = true;
+    private boolean mUseThreeLetterAbbreviation = false;
 
-    // Colors
-    private int mMultiEventIndicatorColor;
-    private int mCurrentDayBackgroundColor;
-    private int mCalendarTextColor;
-    private int mCurrentSelectedDayBackgroundColor;
-    private int mCalendarBackgroundColor = Color.WHITE;
-    private TimeZone mTimeZone = TimeZone.getDefault();
-    private Locale mLocale = Locale.getDefault();
+    private static boolean sShouldShowMondayAsFirstDay = true;
 
     // Calendars
     private Calendar mTodayCalendar;
-    private Calendar mCurrentCalendar = Calendar.getInstance();
+    private Calendar mCurrentCalendar;
     private Calendar mMinDateCalendar = null;
     private Calendar mMaxDateCalendar = null;
     private Calendar mEventsCalendar;
+    private TimeZone mTimeZone = TimeZone.getDefault();
+    private Locale mLocale = Locale.getDefault();
 
     // Events
     private EventsContainer mEventsContainer;
@@ -146,64 +127,64 @@ public class EventsCalendarPageView extends View {
         }
     };
 
-    public EventsCalendarPageView(Context context, AttributeSet attrs, Calendar currentCalendar,
-                                  Calendar minDateCalendar, Calendar maxDateCalendar, List<Integer> inactiveDays,
-                                  TimeZone timeZone, Locale locale, EventsCalendarPageViewListener listener) {
-        super(context, attrs);
-        this.mCurrentCalendar = currentCalendar;
-        this.mMinDateCalendar = minDateCalendar;
-        this.mMaxDateCalendar = maxDateCalendar;
-        this.mInactiveDaysList = inactiveDays;
-        this.mTimeZone = timeZone;
-        this.mLocale = locale;
-        this.mListener = listener;
-        setAttrs(context, attrs);
+    public EventsCalendarPageView(Context context, Date currentCalendar,
+                                  Date minDateCalendar, Date maxDateCalendar, List<Integer> inactiveDays,
+                                  TimeZone timeZone, Locale locale, CalendarAttr calendarAttr, EventsCalendarPageViewListener listener) {
+        super(context);
+        mCurrentCalendar = CalendarUtils.getCalendar(currentCalendar, sShouldShowMondayAsFirstDay, timeZone, locale);
+        mMinDateCalendar = CalendarUtils.getCalendar(minDateCalendar, sShouldShowMondayAsFirstDay, timeZone, locale);
+        mMaxDateCalendar = CalendarUtils.getCalendar(maxDateCalendar, sShouldShowMondayAsFirstDay, timeZone, locale);
+        mInactiveDaysList = inactiveDays;
+        mTimeZone = timeZone;
+        mLocale = locale;
+        mListener = listener;
+        mCalendarAttr = calendarAttr;
         init(context);
     }
 
     public EventsCalendarPageView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setAttrs(context, attrs);
+        mCalendarAttr = new CalendarAttr(context, attrs);
         init(context);
     }
 
     public EventsCalendarPageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setAttrs(context, attrs);
+        mCalendarAttr = new CalendarAttr(context, attrs);
         init(context);
     }
 
-    private void setAttrs(Context context, AttributeSet attrs) {
-
-        mCalendarBackgroundColor = ContextCompat.getColor(context, R.color.backgroundColor);
-        mCurrentSelectedDayBackgroundColor = ContextCompat.getColor(context, R.color.currentSelectedDayColor);
-        mCurrentDayBackgroundColor = ContextCompat.getColor(context, R.color.currentDayColor);
-        mCalendarTextColor = ContextCompat.getColor(context, R.color.textColor);
-        mMultiEventIndicatorColor = ContextCompat.getColor(context, R.color.multiIndicatorColor);
-
-        if (attrs != null && context != null) {
-            TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.EventsCalendarView, 0, 0);
-            try {
-                mCurrentDayBackgroundColor = typedArray.getColor(R.styleable.EventsCalendarView_eventsCalendarCurrentDayBackgroundColor, mCurrentDayBackgroundColor);
-                mCalendarTextColor = typedArray.getColor(R.styleable.EventsCalendarView_eventsCalendarTextColor, mCalendarTextColor);
-                mCurrentSelectedDayBackgroundColor = typedArray.getColor(R.styleable.EventsCalendarView_eventsCalendarCurrentSelectedDayBackgroundColor, mCurrentSelectedDayBackgroundColor);
-                mCalendarBackgroundColor = typedArray.getColor(R.styleable.EventsCalendarView_eventsCalendarBackgroundColor, mCalendarBackgroundColor);
-                mMultiEventIndicatorColor = typedArray.getColor(R.styleable.EventsCalendarView_eventsCalendarMultiEventIndicatorColor, mMultiEventIndicatorColor);
-                mTextSize = typedArray.getDimensionPixelSize(R.styleable.EventsCalendarView_eventsCalendarTextSize, getResources().getDimensionPixelSize(R.dimen.textSize));
-                mTargetHeight = typedArray.getDimensionPixelSize(R.styleable.EventsCalendarView_eventsCalendarTargetHeight,
-                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, mTargetHeight, context.getResources().getDisplayMetrics()));
-                mEventIndicatorStyle = typedArray.getInt(R.styleable.EventsCalendarView_eventsCalendarEventIndicatorStyle, SMALL_INDICATOR);
-                mCurrentDayIndicator = typedArray.getBoolean(R.styleable.EventsCalendarView_eventsCalendarCurrentDayIndicator, true);
-                mCurrentDayIndicatorStyle = typedArray.getInt(R.styleable.EventsCalendarView_eventsCalendarCurrentDayIndicatorStyle, FILL_LARGE_INDICATOR);
-                mCurrentSelectedDayIndicatorStyle = typedArray.getInt(R.styleable.EventsCalendarView_eventsCalendarCurrentSelectedDayIndicatorStyle, FILL_LARGE_INDICATOR);
-                mDefaultSelectedPresentDay = typedArray.getBoolean(R.styleable.EventsCalendarView_eventsCalendarDefaultSelectedPresentDay, true);
-                mCalendarFormat = typedArray.getInt(R.styleable.EventsCalendarView_eventsCalendarFormat, MONTHLY);
-                mInactiveWeekend = typedArray.getBoolean(R.styleable.EventsCalendarView_eventsCalendarInactiveWeekend, false);
-            } finally {
-                typedArray.recycle();
-            }
-        }
-    }
+//    private void setAttrs(Context context, AttributeSet attrs) {
+//
+//        mCalendarBackgroundColor = ContextCompat.getColor(context, R.color.backgroundColor);
+//        mCurrentSelectedDayBackgroundColor = ContextCompat.getColor(context, R.color.currentSelectedDayColor);
+//        mCurrentDayBackgroundColor = ContextCompat.getColor(context, R.color.currentDayColor);
+//        mCalendarTextColor = ContextCompat.getColor(context, R.color.textColor);
+//        mMultiEventIndicatorColor = ContextCompat.getColor(context, R.color.multiIndicatorColor);
+//
+//        if (attrs != null && context != null) {
+//            TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.EventsCalendarView, 0, 0);
+//            try {
+//                mCurrentDayBackgroundColor = typedArray.getColor(R.styleable.EventsCalendarView_eventsCalendarCurrentDayBackgroundColor, mCurrentDayBackgroundColor);
+//                mCalendarTextColor = typedArray.getColor(R.styleable.EventsCalendarView_eventsCalendarTextColor, mCalendarTextColor);
+//                mCurrentSelectedDayBackgroundColor = typedArray.getColor(R.styleable.EventsCalendarView_eventsCalendarCurrentSelectedDayBackgroundColor, mCurrentSelectedDayBackgroundColor);
+//                mCalendarBackgroundColor = typedArray.getColor(R.styleable.EventsCalendarView_eventsCalendarBackgroundColor, mCalendarBackgroundColor);
+//                mMultiEventIndicatorColor = typedArray.getColor(R.styleable.EventsCalendarView_eventsCalendarMultiEventIndicatorColor, mMultiEventIndicatorColor);
+//                mTextSize = typedArray.getDimensionPixelSize(R.styleable.EventsCalendarView_eventsCalendarTextSize, getResources().getDimensionPixelSize(R.dimen.textSize));
+//                mTargetHeight = typedArray.getDimensionPixelSize(R.styleable.EventsCalendarView_eventsCalendarTargetHeight,
+//                        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, mTargetHeight, context.getResources().getDisplayMetrics()));
+//                mEventIndicatorStyle = typedArray.getInt(R.styleable.EventsCalendarView_eventsCalendarEventIndicatorStyle, SMALL_INDICATOR);
+//                mCurrentDayIndicator = typedArray.getBoolean(R.styleable.EventsCalendarView_eventsCalendarCurrentDayIndicator, true);
+//                mCurrentDayIndicatorStyle = typedArray.getInt(R.styleable.EventsCalendarView_eventsCalendarCurrentDayIndicatorStyle, FILL_LARGE_INDICATOR);
+//                mCurrentSelectedDayIndicatorStyle = typedArray.getInt(R.styleable.EventsCalendarView_eventsCalendarCurrentSelectedDayIndicatorStyle, FILL_LARGE_INDICATOR);
+//                mDefaultSelectedPresentDay = typedArray.getBoolean(R.styleable.EventsCalendarView_eventsCalendarDefaultSelectedPresentDay, true);
+//                mCalendarFormat = typedArray.getInt(R.styleable.EventsCalendarView_eventsCalendarFormat, MONTHLY);
+//                mInactiveWeekend = typedArray.getBoolean(R.styleable.EventsCalendarView_eventsCalendarInactiveWeekend, false);
+//            } finally {
+////                typedArray.recycle();
+//            }
+//        }
+//    }
 
     private void init(Context context) {
 
@@ -213,7 +194,7 @@ public class EventsCalendarPageView extends View {
         }
         mEventsCalendar = CalendarUtils.initCalendar(sShouldShowMondayAsFirstDay, mTimeZone, mLocale);
 
-        mEventsContainer = new EventsContainer(Calendar.getInstance(), mCalendarFormat);
+        mEventsContainer = new EventsContainer(Calendar.getInstance(), mCalendarAttr.getCalendarFormat());
 
         setUseWeekDayAbbreviation(false);
         mDayPaint.setTextAlign(Paint.Align.CENTER);
@@ -221,7 +202,7 @@ public class EventsCalendarPageView extends View {
         mDayPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         mDayPaint.setTypeface(Typeface.SANS_SERIF);
         mDayPaint.setTextSize(mTextSize);
-        mDayPaint.setColor(mCalendarTextColor);
+        mDayPaint.setColor(mCalendarAttr.getCalendarTextColor());
         mDayPaint.getTextBounds("31", 0, "31".length(), mTextSizeRect);
         mTextHeight = mTextSizeRect.height() * 3;
         mTextWidth = mTextSizeRect.width() * 2;
@@ -233,7 +214,6 @@ public class EventsCalendarPageView extends View {
         //scale small indicator by screen density
         mSmallIndicatorRadius = 2.5f * mScreenDensity;
         mXIndicatorOffset = 3.5f * mScreenDensity;
-
     }
 
     private void initScreenDensityRelatedValues(Context context) {
@@ -258,14 +238,15 @@ public class EventsCalendarPageView extends View {
         mTodayCalendar = CalendarUtils.initCalendar(sShouldShowMondayAsFirstDay, mTimeZone, mLocale);
 
         mCalendarDrawer = new CalendarDrawer(mHeightPerDay, mPaddingHeight, mWidthPerDay, mPaddingWidth, mPaddingRight, mPaddingLeft,
-                mScreenDensity, mDayPaint, mCalendarTextColor, mCurrentDayIndicator, mCurrentDayIndicatorStyle, mCurrentSelectedDayIndicatorStyle,
-                mCurrentSelectedDayBackgroundColor, mCurrentDayBackgroundColor, mBigCircleIndicatorRadius, mEventsContainer,
+                mScreenDensity, mDayPaint, mCalendarAttr.getCalendarTextColor(), mCalendarAttr.isCurrentDayIndicator(), mCalendarAttr.getCurrentDayIndicatorStyle(),
+                mCalendarAttr.getCurrentSelectedDayIndicatorStyle(),
+                mCalendarAttr.getCurrentSelectedDayBackgroundColor(), mCalendarAttr.getCurrentDayBackgroundColor(), mBigCircleIndicatorRadius, mEventsContainer,
                 mShouldDrawDaysHeader, mTodayCalendar, mInactiveDaysList, dayColumnNames, mEventsCalendar, mShouldDrawIndicatorsBelowSelectedDays,
-                mTextHeight, mEventIndicatorStyle, mSmallIndicatorRadius, mMultiEventIndicatorColor, mMultiDayIndicatorStrokeWidth,
+                mTextHeight, mCalendarAttr.getEventIndicatorStyle(), mSmallIndicatorRadius, mCalendarAttr.getMultiEventIndicatorColor(), mMultiDayIndicatorStrokeWidth,
                 mMinDateCalendar, mMaxDateCalendar, sShouldShowMondayAsFirstDay, mXIndicatorOffset);
 
-        mCalendarDrawer.drawCalendarBackground(canvas, mCalendarBackgroundColor, mWidth, mHeight);
-        if (mCalendarFormat == MONTHLY) {
+        mCalendarDrawer.drawCalendarBackground(canvas, mCalendarAttr.getCalendarBackgroundColor(), mWidth, mHeight);
+        if (mCalendarAttr.getCalendarFormat() == MONTHLY) {
             mCalendarDrawer.drawMonth(canvas, mCurrentCalendar);
         } else {
             mCalendarDrawer.drawWeek(canvas, mCurrentCalendar);
@@ -278,7 +259,7 @@ public class EventsCalendarPageView extends View {
         int width = MeasureSpec.getSize(parentWidth);
         int height = MeasureSpec.getSize(parentHeight);
         if (width > 0 && height > 0) {
-            mWidthPerDay = (width) / DAYS_IN_WEEK;
+            mWidthPerDay = (width) / CalendarAttr.DAYS_IN_WEEK;
             mHeightPerDay = mTargetHeight > 0 ? mTargetHeight / 7 : height / 7;
             this.mWidth = width;
             this.mHeight = height;
@@ -289,7 +270,7 @@ public class EventsCalendarPageView extends View {
             mBigCircleIndicatorRadius = getInterpolatedBigCircleIndicator();
 
             // scale the selected day indicators slightly so that event indicators can be drawn below
-            mBigCircleIndicatorRadius = mShouldDrawIndicatorsBelowSelectedDays && mEventIndicatorStyle == SMALL_INDICATOR ? mBigCircleIndicatorRadius * 0.85f : mBigCircleIndicatorRadius;
+            mBigCircleIndicatorRadius = mShouldDrawIndicatorsBelowSelectedDays && mCalendarAttr.getEventIndicatorStyle() == CalendarAttr.SMALL_INDICATOR ? mBigCircleIndicatorRadius * 0.85f : mBigCircleIndicatorRadius;
         }
         setMeasuredDimension(width, height);
     }
@@ -361,9 +342,13 @@ public class EventsCalendarPageView extends View {
         invalidate();
     }
 
+    public Date getCurrentDate() {
+        return mCurrentCalendar.getTime();
+    }
+
     private void setFirstDay(Calendar calendar) {
 
-        if (mCalendarFormat == MONTHLY) {
+        if (mCalendarAttr.getCalendarFormat() == MONTHLY) {
             calendar.set(Calendar.DAY_OF_MONTH, 1);
         } else {
             calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
@@ -484,23 +469,23 @@ public class EventsCalendarPageView extends View {
         }
         this.mLocale = locale;
         this.mTimeZone = timeZone;
-        this.mEventsContainer = new EventsContainer(Calendar.getInstance(this.mTimeZone, this.mLocale), mCalendarFormat);
+        this.mEventsContainer = new EventsContainer(Calendar.getInstance(this.mTimeZone, this.mLocale), mCalendarAttr.getCalendarFormat());
         // passing null will not re-init density related values - and that's ok
         init(null);
     }
 
     public void setCurrentSelectedDayIndicatorStyle(final int currentSelectedDayIndicatorStyle) {
-        this.mCurrentSelectedDayIndicatorStyle = currentSelectedDayIndicatorStyle;
+        mCalendarAttr.setCurrentSelectedDayIndicatorStyle(currentSelectedDayIndicatorStyle);
         invalidate();
     }
 
     public void setCurrentDayIndicatorStyle(final int currentDayIndicatorStyle) {
-        this.mCurrentDayIndicatorStyle = currentDayIndicatorStyle;
+        mCalendarAttr.setCurrentDayIndicatorStyle(currentDayIndicatorStyle);
         invalidate();
     }
 
     public void setEventIndicatorStyle(final int eventIndicatorStyle) {
-        this.mEventIndicatorStyle = eventIndicatorStyle;
+        mCalendarAttr.setEventIndicatorStyle(eventIndicatorStyle);
         invalidate();
     }
 

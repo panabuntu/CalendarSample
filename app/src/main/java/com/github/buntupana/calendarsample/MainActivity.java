@@ -5,32 +5,40 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
-import com.github.buntupana.eventscalendarview.EventsCalendarPageView;
 import com.github.buntupana.eventscalendarview.EventsCalendarView;
 import com.github.buntupana.eventscalendarview.domain.Event;
-import com.github.buntupana.eventscalendarview.listeners.EventsCalendarPageViewListener;
+import com.github.buntupana.eventscalendarview.listeners.EventsCalendarViewListener;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import static com.github.buntupana.calendarsample.R.id.calendar;
+
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = MainActivity.class.getSimpleName();
 
-    private EventsCalendarPageView monthPage;
     private EventsCalendarView calendarView;
+    private TextView textDate;
+    private TextView textDay;
+    private SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy");
+    private SimpleDateFormat sdf2 = new SimpleDateFormat("dd MMM yyyy");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        monthPage = (EventsCalendarPageView) findViewById(R.id.month);
-        calendarView = (EventsCalendarView) findViewById(R.id.calendar);
+        calendarView = (EventsCalendarView) findViewById(calendar);
+        textDate = (TextView) findViewById(R.id.textDate);
+        textDay = (TextView) findViewById(R.id.textDay);
 
         Calendar calendar = Calendar.getInstance();
         Calendar minDate = Calendar.getInstance();
@@ -40,21 +48,32 @@ public class MainActivity extends AppCompatActivity {
         maxDate.set(Calendar.DAY_OF_MONTH, 24);
 
 //        calendarView.add(Calendar.MONTH, 1);
-
-        monthPage.setCurrentDate(calendar.getTime());
-        monthPage.addInactiveDays(Calendar.SUNDAY);
 //        calendarView.setMinDate(minDate.getTime());
-        monthPage.setMinDateCalendar(minDate.getTime());
-        monthPage.setMaxDateCalendar(maxDate.getTime());
 
         addEvents(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
         addEvents(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
         addEvents(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
 
-        monthPage.setOnDayClickListener(new EventsCalendarPageViewListener() {
+        calendarView.setMinDate(minDate.getTime());
+//        calendarView.setMaxDate(maxDate.getTime());
+
+        calendarView.setListener(new EventsCalendarViewListener() {
+            @Override
+            public void onMonthScroll(Date firstDayOfNewMonth) {
+                textDate.setText(sdf.format(firstDayOfNewMonth));
+            }
+
             @Override
             public void onDayClick(Date dateClicked) {
-                Log.d(TAG, "onDayClick: ");
+                Log.d(TAG, "onDayClick: " + dateClicked);
+                textDay.setText("onDayClick: " + sdf2.format(dateClicked));
+            }
+        });
+
+        ((Button)findViewById(R.id.button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                calendarView.refresh();
             }
         });
 
@@ -80,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
 
             List<Event> events = getEvents(timeInMillis, i);
 
-            monthPage.addEvents(events);
 //            mCompactCalendarViewMonthly.addEvents(events);
         }
     }

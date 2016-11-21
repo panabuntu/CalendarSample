@@ -25,20 +25,27 @@
         app:eventsCalendarTextColor="#fff"
         app:eventsCalendarTextSize="12sp"/>
 
-    <com.github.buntupana.eventscalendarview.EventsCalendarPageView
-        android:id="@+id/month"
-        android:layout_width="fill_parent"
-        android:layout_height="250dp"
+    <TextView
+        android:text="TextView"
         android:layout_marginTop="16dp"
-        app:eventsCalendarCurrentDayBackgroundColor="#B71C1C"
-        app:eventsCalendarCurrentDayIndicator="false"
-        app:eventsCalendarCurrentDayIndicatorStyle="fill_large_indicator"
-        app:eventsCalendarCurrentSelectedDayBackgroundColor="#ffbd5f5f"
-        app:eventsCalendarDefaultSelectedPresentDay="false"
-        app:eventsCalendarEventIndicatorStyle="small_indicator"
-        app:eventsCalendarFormat="monthly"
-        app:eventsCalendarTargetHeight="250dp"
-        app:eventsCalendarTextColor="#fff"
-        app:eventsCalendarTextSize="12sp"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textDate"
+        android:textSize="24sp"/>
+
+    <TextView
+        android:text="TextView"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textDay"
+        android:textSize="24sp"/>
+
+    <Button
+        android:text="Button"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button"/>
 
 </LinearLayout>

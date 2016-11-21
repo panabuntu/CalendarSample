@@ -1,6 +1,7 @@
 package com.github.buntupana.eventscalendarview;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -37,5 +38,22 @@ public class CalendarUtils {
         boolean conditionalMaxDate = maxDateCalendar != null && maxDateCalendar.getTimeInMillis() < calendar.getTimeInMillis();
 
         return conditionalActiveDay || conditionalMinDate || conditionalMaxDate;
+    }
+
+    public static Calendar getCalendar(Date date, boolean shouldShowMondayAsFirstDay, TimeZone timeZone, Locale locale){
+        Calendar calendar;
+        if(date == null){
+            calendar = null;
+        } else {
+            calendar = Calendar.getInstance(timeZone, locale);
+            calendar.setMinimalDaysInFirstWeek(1);
+            if(shouldShowMondayAsFirstDay){
+                calendar.setFirstDayOfWeek(Calendar.MONDAY);
+            } else {
+                calendar.setFirstDayOfWeek(Calendar.SUNDAY);
+            }
+            calendar.setTime(date);
+        }
+        return calendar;
     }
 }
