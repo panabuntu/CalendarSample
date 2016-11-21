@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.github.buntupana.eventscalendarview.EventsCalendarPageView;
+import com.github.buntupana.eventscalendarview.EventsCalendarView;
 import com.github.buntupana.eventscalendarview.domain.Event;
 import com.github.buntupana.eventscalendarview.listeners.EventsCalendarPageViewListener;
 
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private final String TAG = MainActivity.class.getSimpleName();
 
     private EventsCalendarPageView monthPage;
+    private EventsCalendarView calendarView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         monthPage = (EventsCalendarPageView) findViewById(R.id.month);
+        calendarView = (EventsCalendarView) findViewById(R.id.calendar);
 
         Calendar calendar = Calendar.getInstance();
         Calendar minDate = Calendar.getInstance();
@@ -36,10 +39,11 @@ public class MainActivity extends AppCompatActivity {
         minDate.set(Calendar.DAY_OF_MONTH, 3);
         maxDate.set(Calendar.DAY_OF_MONTH, 24);
 
-//        calendar.add(Calendar.MONTH, 1);
+//        calendarView.add(Calendar.MONTH, 1);
 
         monthPage.setCurrentDate(calendar.getTime());
         monthPage.addInactiveDays(Calendar.SUNDAY);
+//        calendarView.setMinDate(minDate.getTime());
         monthPage.setMinDateCalendar(minDate.getTime());
         monthPage.setMaxDateCalendar(maxDate.getTime());
 

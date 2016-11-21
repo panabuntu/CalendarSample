@@ -23,9 +23,9 @@ public class EventsCalendarView extends RelativeLayout {
     public static final int MONTHLY = 0;
     public static final int WEEKLY = 1;
 
-    private ViewPager mPager = null;
+    private CustomViewPager mPager = null;
     private DynamicViewPagerAdapter mPagerAdapter = null;
-    private AttributeSet attrs;
+    private AttributeSet mAttrs;
 
     private Calendar mCurrentCalendar = Calendar.getInstance();
     private final Calendar mPreviousCalendar = Calendar.getInstance();
@@ -35,6 +35,7 @@ public class EventsCalendarView extends RelativeLayout {
 
     private int mCalendarFormat = MONTHLY;
     private boolean mDefaultSelectedPresentDay = true;
+    private boolean shouldShowMondayAsFirstDay = true;
 
     private Calendar mMinCalendar;
     private Calendar mMaxCalendar;
@@ -55,7 +56,7 @@ public class EventsCalendarView extends RelativeLayout {
     }
 
     private void setAttrs(AttributeSet attrs) {
-        this.attrs = attrs;
+        mAttrs = attrs;
         if (attrs != null && getContext() != null) {
             TypedArray typedArray = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.EventsCalendarView, 0, 0);
             try {
@@ -72,7 +73,7 @@ public class EventsCalendarView extends RelativeLayout {
         mCalendarUnit = mCalendarFormat == MONTHLY ? Calendar.MONTH : Calendar.WEEK_OF_YEAR;
 
         mPagerAdapter = new DynamicViewPagerAdapter();
-        mPager = new ViewPager(getContext());
+        mPager = new CustomViewPager(getContext());
         mPager.setAdapter(mPagerAdapter);
 
         setCurrentDate(new Date());
@@ -87,7 +88,7 @@ public class EventsCalendarView extends RelativeLayout {
         mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (mPager.getCurrentItem() == position && positionOffset == 0 && positionOffsetPixels == 0) {
+                if (mPager.getCurrentItem() == position && positionOffset == 0 && position != 1 && positionOffsetPixels == 0) {
                     if (position == 0 && !isNextLimitReached()) {
 
                         mPreviousCalendar.add(mCalendarUnit, -1);
@@ -112,24 +113,7 @@ public class EventsCalendarView extends RelativeLayout {
     }
 
     private View getView(Calendar calendarToDraw) {
-        return new EventsCalendarPageView(getContext(), attrs, calendarToDraw, mMinCalendar, mMaxCalendar, inactiveDays, TimeZone.getDefault(), Locale.getDefault(), null);
-    }
-
-    private void setDates() {
-
-        mPreviousCalendar.setTimeInMillis(mCurrentCalendar.getTimeInMillis());
-        mNextCalendar.setTimeInMillis(mCurrentCalendar.getTimeInMillis());
-
-        mPreviousCalendar.add(mCalendarUnit, -1);
-        mNextCalendar.add(mCalendarUnit, 1);
-
-        setFirstDay(mPreviousCalendar);
-        setFirstDay(mNextCalendar);
-        if (mDefaultSelectedPresentDay) {
-            resetHour(mCurrentCalendar);
-        } else {
-            setFirstDay(mCurrentCalendar);
-        }
+        return new EventsCalendarPageView(getContext(), mAttrs, calendarToDraw, mMinCalendar, mMaxCalendar, inactiveDays, TimeZone.getDefault(), Locale.getDefault(), null);
     }
 
     private void setFirstDay(Calendar calendar) {
@@ -174,10 +158,11 @@ public class EventsCalendarView extends RelativeLayout {
         if (date == null) {
             mMinCalendar = null;
         } else {
-            mMinCalendar.setFirstDayOfWeek(Calendar.MONDAY);
+//            mMinCalendar = CalendarUtils.initCalendar(sho)
             mMinCalendar.setTime(date);
             resetHour(mMinCalendar);
         }
+        invalidate();
     }
 
     public void setMaxDate(Date date) {
@@ -188,6 +173,7 @@ public class EventsCalendarView extends RelativeLayout {
             mMaxCalendar.setTime(date);
             resetHour(mMaxCalendar);
         }
+        invalidate();
     }
 
     private boolean isPreviousLimitReached() {
@@ -216,5 +202,18 @@ public class EventsCalendarView extends RelativeLayout {
             result = isGreaterOrEqualYear && isGreaterOrEqualUnit;
         }
         return result;
+    }
+    public void setShouldShowMondayAsFirstDay(boolean shouldShowMondayAsFirstDay) {
+        this.shouldShowMondayAsFirstDay = shouldShowMondayAsFirstDay;
+//        setUseWeekDayAbbreviation(useThreeLetterAbbreviation);
+//        if (shouldShowMondayAsFirstDay) {
+//            eventsCalendar.setFirstDayOfWeek(Calendar.MONDAY);
+//            todayCalendar.setFirstDayOfWeek(Calendar.MONDAY);
+//            currentCalendar.setFirstDayOfWeek(Calendar.MONDAY);
+//        } else {
+//            eventsCalendar.setFirstDayOfWeek(Calendar.SUNDAY);
+//            todayCalendar.setFirstDayOfWeek(Calendar.SUNDAY);
+//            currentCalendar.setFirstDayOfWeek(Calendar.SUNDAY);
+//        }
     }
 }
