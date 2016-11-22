@@ -18,9 +18,9 @@
         app:eventsCalendarCurrentDayIndicator="false"
         app:eventsCalendarCurrentDayIndicatorStyle="fill_large_indicator"
         app:eventsCalendarCurrentSelectedDayBackgroundColor="#ffbd5f5f"
-        app:eventsCalendarDefaultSelectedPresentDay="false"
+        app:eventsCalendarDefaultSelectedPresentDay="true"
         app:eventsCalendarEventIndicatorStyle="small_indicator"
-        app:eventsCalendarFormat="weekly"
+        app:eventsCalendarFormat="monthly"
         app:eventsCalendarTargetHeight="250dp"
         app:eventsCalendarTextColor="#fff"
         app:eventsCalendarTextSize="12sp"/>

@@ -45,7 +45,7 @@ public class EventsCalendarPageView extends View {
     private boolean mShouldSelect = true;
 
     // Sizes
-    private int mTextSize = 30;
+//    private int mTextSize = 30;
     private int mTargetHeight;
 
     private int mTextHeight;
@@ -177,7 +177,7 @@ public class EventsCalendarPageView extends View {
         mDayPaint.setStyle(Paint.Style.STROKE);
         mDayPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         mDayPaint.setTypeface(Typeface.SANS_SERIF);
-        mDayPaint.setTextSize(mTextSize);
+        mDayPaint.setTextSize(mCalendarAttr.getTextSize());
         mDayPaint.setColor(mCalendarAttr.getCalendarTextColor());
         mDayPaint.getTextBounds("31", 0, "31".length(), mTextSizeRect);
         mTextHeight = mTextSizeRect.height() * 3;
