@@ -42,6 +42,8 @@ public class EventsCalendarPageView extends View {
 
     private CalendarAttr mCalendarAttr;
 
+    private boolean mShouldSelect = true;
+
     // Sizes
     private int mTextSize = 30;
     private int mTargetHeight;
@@ -130,7 +132,7 @@ public class EventsCalendarPageView extends View {
 
     public EventsCalendarPageView(Context context, Date currentCalendar,
                                   Date minDateCalendar, Date maxDateCalendar, EventsContainer eventsContainer, List<Integer> inactiveDays,
-                                  TimeZone timeZone, Locale locale, CalendarAttr calendarAttr, EventsCalendarPageViewListener listener) {
+                                  TimeZone timeZone, Locale locale, CalendarAttr calendarAttr, boolean shouldSelect, EventsCalendarPageViewListener listener) {
         super(context);
         mCurrentCalendar = CalendarUtils.getCalendar(currentCalendar, sShouldShowMondayAsFirstDay, timeZone, locale);
         mMinDateCalendar = CalendarUtils.getCalendar(minDateCalendar, sShouldShowMondayAsFirstDay, timeZone, locale);
@@ -141,6 +143,8 @@ public class EventsCalendarPageView extends View {
         mLocale = locale;
         mListener = listener;
         mCalendarAttr = calendarAttr;
+        mShouldSelect = shouldSelect;
+
         init(context);
     }
 
@@ -219,9 +223,9 @@ public class EventsCalendarPageView extends View {
 
         mCalendarDrawer.drawCalendarBackground(canvas, mCalendarAttr.getCalendarBackgroundColor(), mWidth, mHeight);
         if (mCalendarAttr.getCalendarFormat() == MONTHLY) {
-            mCalendarDrawer.drawMonth(canvas, mCurrentCalendar);
+            mCalendarDrawer.drawMonth(canvas, mCurrentCalendar, mShouldSelect);
         } else {
-            mCalendarDrawer.drawWeek(canvas, mCurrentCalendar);
+            mCalendarDrawer.drawWeek(canvas, mCurrentCalendar, mShouldSelect);
         }
     }
 
@@ -231,8 +235,9 @@ public class EventsCalendarPageView extends View {
         int width = MeasureSpec.getSize(parentWidth);
         int height = MeasureSpec.getSize(parentHeight);
         if (width > 0 && height > 0) {
+            int numRows = mCalendarAttr.getCalendarFormat() == CalendarAttr.MONTHLY ? 7 : 2;
             mWidthPerDay = (width) / CalendarAttr.DAYS_IN_WEEK;
-            mHeightPerDay = mTargetHeight > 0 ? mTargetHeight / 7 : height / 7;
+            mHeightPerDay = mTargetHeight > 0 ? mTargetHeight / numRows : height / numRows;
             this.mWidth = width;
             this.mHeight = height;
             this.mPaddingRight = getPaddingRight();
@@ -320,7 +325,7 @@ public class EventsCalendarPageView extends View {
 
     private void setFirstDay(Calendar calendar) {
 
-        if (mCalendarAttr.getCalendarFormat() == MONTHLY) {
+        if (mCalendarAttr.getCalendarFormat() == CalendarAttr.MONTHLY) {
             calendar.set(Calendar.DAY_OF_MONTH, 1);
         } else {
             calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
@@ -528,5 +533,21 @@ public class EventsCalendarPageView extends View {
 
     public void setOnDayClickListener(EventsCalendarPageViewListener listener) {
         this.mListener = listener;
+    }
+
+    public boolean isShouldSelect() {
+        return mShouldSelect;
+    }
+
+    public void setShouldSelect(boolean shouldSelect) {
+        mShouldSelect = shouldSelect;
+        if(shouldSelect) {
+            if (mCalendarAttr.getCalendarFormat() == CalendarAttr.MONTHLY) {
+                mCurrentCalendar.set(Calendar.DAY_OF_MONTH, 1);
+            } else {
+                mCurrentCalendar.set(Calendar.DAY_OF_WEEK, mCurrentCalendar.getFirstDayOfWeek());
+            }
+        }
+        invalidate();
     }
 }

@@ -39,7 +39,7 @@ public class EventsCalendarView extends RelativeLayout {
 
     private int mCalendarUnit = Calendar.MONTH;
 
-//    private int mCalendarFormat = MONTHLY;
+    //    private int mCalendarFormat = MONTHLY;
 //    private boolean mDefaultSelectedPresentDay = true;
     private boolean shouldShowMondayAsFirstDay = true;
 
@@ -76,7 +76,7 @@ public class EventsCalendarView extends RelativeLayout {
 
     private void init() {
 
-        if(mEventsContainer == null) {
+        if (mEventsContainer == null) {
             mEventsContainer = new EventsContainer(Calendar.getInstance(), mCalendarAttr.getCalendarFormat());
         }
         mCalendarUnit = mCalendarAttr.getCalendarFormat() == CalendarAttr.MONTHLY ? Calendar.MONTH : Calendar.WEEK_OF_YEAR;
@@ -88,14 +88,14 @@ public class EventsCalendarView extends RelativeLayout {
         setCurrentDate(new Date());
 
         if (mMinCalendar == null || mMinCalendar.get(mCalendarUnit) < mCurrentCalendar.get(mCalendarUnit)) {
-            mPagerAdapter.addView(getView(mPreviousCalendar.getTime()), mPagerAdapter.getCount());
+            mPagerAdapter.addView(getView(mPreviousCalendar.getTime(), false), mPagerAdapter.getCount());
         }
 
-        mPagerAdapter.addView(getView(mCurrentCalendar.getTime()), mPagerAdapter.getCount());
-        mPager.setCurrentItem(mPagerAdapter.getCount()-1, false);
+        mPagerAdapter.addView(getView(mCurrentCalendar.getTime(), true), mPagerAdapter.getCount());
+        mPager.setCurrentItem(mPagerAdapter.getCount() - 1, false);
 
         if (mMaxCalendar == null || mMaxCalendar.get(mCalendarUnit) > mCurrentCalendar.get(mCalendarUnit)) {
-            mPagerAdapter.addView(getView(mNextCalendar.getTime()), mPagerAdapter.getCount());
+            mPagerAdapter.addView(getView(mNextCalendar.getTime(), false), mPagerAdapter.getCount());
         }
 
         mPagerAdapter.notifyDataSetChanged();
@@ -109,21 +109,26 @@ public class EventsCalendarView extends RelativeLayout {
                         mPreviousCalendar.add(mCalendarUnit, -1);
                         Calendar aux = CalendarUtils.initCalendar(shouldShowMondayAsFirstDay, TimeZone.getDefault(), Locale.getDefault());
                         aux.setTimeInMillis(mPreviousCalendar.getTimeInMillis());
-                        mPagerAdapter.addView(getView(mPreviousCalendar.getTime()), 0);
+                        mPagerAdapter.addView(getView(mPreviousCalendar.getTime(), false), 0);
 
                     } else if (position == (mPagerAdapter.getCount() - 1) && !isMaxDateLimitReached()) {
 
                         mNextCalendar.add(mCalendarUnit, 1);
                         Calendar aux = CalendarUtils.initCalendar(shouldShowMondayAsFirstDay, TimeZone.getDefault(), Locale.getDefault());
                         aux.setTimeInMillis(mNextCalendar.getTimeInMillis());
-                        mPagerAdapter.addView((getView(mNextCalendar.getTime())));
+                        mPagerAdapter.addView((getView(mNextCalendar.getTime(), false)));
                     }
 
-                    if (position == mPager.getCurrentItem()) {
-                        mCurrentCalendar.setTime(((EventsCalendarPageView) mPagerAdapter.getView(position)).getCurrentDate());
-                        if (mListener != null) {
-                            mListener.onMonthScroll(mCurrentCalendar.getTime());
-                        }
+                    mCurrentCalendar.setTime(((EventsCalendarPageView) mPagerAdapter.getView(position)).getCurrentDate());
+                    ((EventsCalendarPageView) mPagerAdapter.getView(position)).setShouldSelect(true);
+                    if(position != 0){
+                        ((EventsCalendarPageView) mPagerAdapter.getView(position-1)).setShouldSelect(false);
+                    }
+                    if(mPagerAdapter.getCount() > position){
+                        ((EventsCalendarPageView) mPagerAdapter.getView(position+1)).setShouldSelect(false);
+                    }
+                    if (mListener != null) {
+                        mListener.onMonthScroll(mCurrentCalendar.getTime());
                     }
                 }
             }
@@ -150,9 +155,9 @@ public class EventsCalendarView extends RelativeLayout {
         init();
     }
 
-    private View getView(Date calendarToDraw) {
+    private View getView(Date calendarToDraw, boolean shouldSelect) {
         return new EventsCalendarPageView(getContext(), calendarToDraw, mMinCalendar == null ? null : mMinCalendar.getTime(),
-                mMaxCalendar == null ? null : mMaxCalendar.getTime(), mEventsContainer, inactiveDays, mTimeZone, mLocale, mCalendarAttr, mListener);
+                mMaxCalendar == null ? null : mMaxCalendar.getTime(), mEventsContainer, inactiveDays, mTimeZone, mLocale, mCalendarAttr, shouldSelect, mListener);
     }
 
 

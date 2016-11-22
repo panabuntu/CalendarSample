@@ -20,7 +20,7 @@
         app:eventsCalendarCurrentSelectedDayBackgroundColor="#ffbd5f5f"
         app:eventsCalendarDefaultSelectedPresentDay="false"
         app:eventsCalendarEventIndicatorStyle="small_indicator"
-        app:eventsCalendarFormat="monthly"
+        app:eventsCalendarFormat="weekly"
         app:eventsCalendarTargetHeight="250dp"
         app:eventsCalendarTextColor="#fff"
         app:eventsCalendarTextSize="12sp"/>

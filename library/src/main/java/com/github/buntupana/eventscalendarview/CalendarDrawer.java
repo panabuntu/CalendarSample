@@ -100,7 +100,7 @@ public class CalendarDrawer {
         this.mXIndicatorOffset = xIndicatorOffset;
     }
 
-    void drawMonth(Canvas canvas, Calendar monthToDrawCalendar) {
+    void drawMonth(Canvas canvas, Calendar monthToDrawCalendar, boolean shouldSelect) {
         drawEventsMonthly(canvas, monthToDrawCalendar);
 
         Calendar aux = Calendar.getInstance();
@@ -143,7 +143,7 @@ public class CalendarDrawer {
                     if (aux.getFirstDayOfWeek() == Calendar.MONDAY) {
                         if (day_week == Calendar.SUNDAY && column != 6) {
                             continue;
-                        } else if (day_week != Calendar.SUNDAY && day_week - 1 != column + 1) {
+                        } else if (day_week != Calendar.SUNDAY && (day_week - 1) != (column + 1)) {
                             continue;
                         }
                     } else if (day_week != (column + 1)) {
@@ -152,7 +152,7 @@ public class CalendarDrawer {
 
                     if (mCurrentDayIndicator && isSameYearAsToday && isSameMonthAsToday && todayDayOfMonth == day_month) {
                         drawDayCircleIndicator(mCurrentDayIndicatorStyle, canvas, xPosition, yPosition, mCurrentDayBackgroundColor);
-                    } else if (!selectedDay && mInactiveDays.size() != 7) {
+                    } else if (!selectedDay && mInactiveDays.size() != 7 && shouldSelect) {
                         if (monthToDrawCalendar.get(Calendar.DAY_OF_MONTH) == day_month && !CalendarUtils.isInactiveDate(monthToDrawCalendar, mMinDateCalendar, mMaxDateCalendar, mInactiveDays) && isSameMonthAsCurrentCalendar) {
                             drawDayCircleIndicator(mCurrentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, mCurrentSelectedDayBackgroundColor);
                             selectedDay = true;
@@ -179,7 +179,7 @@ public class CalendarDrawer {
     }
 
 
-    public void drawWeek(Canvas canvas, Calendar weekToDrawCalendar) {
+    public void drawWeek(Canvas canvas, Calendar weekToDrawCalendar, boolean shouldSelect) {
         drawEventsWeekly(canvas, weekToDrawCalendar);
 
         Calendar aux = Calendar.getInstance();
@@ -192,7 +192,6 @@ public class CalendarDrawer {
         boolean isSameYearAsToday = weekToDrawCalendar.get(Calendar.YEAR) == mTodayCalendar.get(Calendar.YEAR);
         boolean isSameWeekAsCurrentCalendar = weekToDrawCalendar.get(Calendar.WEEK_OF_YEAR) == weekToDrawCalendar.get(Calendar.WEEK_OF_YEAR);
         int todayDayOfMonth = mTodayCalendar.get(Calendar.DAY_OF_MONTH);
-//        boolean isAnimatingWithExpose = animationStatus == EXPOSE_CALENDAR_ANIMATION;
 
         boolean selectedDay = false;
         for (int column = 0; column < mDayColumnNames.length; column++) {
@@ -222,15 +221,14 @@ public class CalendarDrawer {
                         aux.add(Calendar.DAY_OF_WEEK, 1);
                     }
                     int day_month = aux.get(Calendar.DAY_OF_MONTH);
-                    int day_week = aux.get(Calendar.DAY_OF_WEEK);
 
                     if (mCurrentDayIndicator && isSameYearAsToday && isSameWeekAsToday && todayDayOfMonth == day_month) {
                         drawDayCircleIndicator(mCurrentDayIndicatorStyle, canvas, xPosition, yPosition, mCurrentDayBackgroundColor);
-                    } else if (!selectedDay && mInactiveDays.size() != 7) {
-                        if (weekToDrawCalendar.get(Calendar.DAY_OF_MONTH) == day_month && !mInactiveDays.contains(weekToDrawCalendar.get(Calendar.DAY_OF_WEEK)) && isSameWeekAsCurrentCalendar) {
+                    } else if (!selectedDay && mInactiveDays.size() != 7 && shouldSelect) {
+                        if (weekToDrawCalendar.get(Calendar.DAY_OF_MONTH) == day_month && !CalendarUtils.isInactiveDate(weekToDrawCalendar, mMinDateCalendar, mMaxDateCalendar, mInactiveDays) && isSameWeekAsCurrentCalendar) {
                             drawDayCircleIndicator(mCurrentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, mCurrentSelectedDayBackgroundColor);
                             selectedDay = true;
-                        } else if (mInactiveDays.contains(weekToDrawCalendar.get(Calendar.DAY_OF_WEEK)) && !mInactiveDays.contains(aux.get(Calendar.DAY_OF_WEEK))) {
+                        } else if (CalendarUtils.isInactiveDate(weekToDrawCalendar, mMinDateCalendar, mMaxDateCalendar, mInactiveDays) && CalendarUtils.isInactiveDate(aux, mMinDateCalendar, mMaxDateCalendar, mInactiveDays)) {
                             drawDayCircleIndicator(mCurrentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, mCurrentSelectedDayBackgroundColor);
                             selectedDay = true;
                         }
@@ -267,13 +265,6 @@ public class CalendarDrawer {
     // Draw Circle on certain days to highlight them
     private void drawCircle(Canvas canvas, float x, float y, int color, float circleScale) {
         mDayPaint.setColor(color);
-//        if (animationStatus == ANIMATE_INDICATORS) {
-//            float maxRadius = circleScale * mBigCircleIndicatorRadius * 1.4f;
-//            drawCircle(canvas, growfactorIndicator > maxRadius ? maxRadius : growfactorIndicator, x, y - (mTextHeight / 6));
-//        } else {
-//            drawCircle(canvas, circleScale * mBigCircleIndicatorRadius, x, y - (mTextHeight / 6));
-//        }
-
         drawCircle(canvas, circleScale * mBigCircleIndicatorRadius, x, y - (mTextHeight / 6));
     }
 
