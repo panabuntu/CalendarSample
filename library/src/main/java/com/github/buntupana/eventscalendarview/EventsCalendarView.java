@@ -7,7 +7,9 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.github.buntupana.eventscalendarview.domain.Event;
+import com.github.buntupana.eventscalendarview.events.EventsContainer;
 import com.github.buntupana.eventscalendarview.listeners.EventsCalendarViewListener;
+import com.github.buntupana.eventscalendarview.utils.CalendarUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

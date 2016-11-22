@@ -16,7 +16,9 @@ import android.view.View;
 import android.view.ViewConfiguration;
 
 import com.github.buntupana.eventscalendarview.domain.Event;
+import com.github.buntupana.eventscalendarview.events.EventsContainer;
 import com.github.buntupana.eventscalendarview.listeners.EventsCalendarPageViewListener;
+import com.github.buntupana.eventscalendarview.utils.CalendarUtils;
 
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
@@ -67,6 +69,9 @@ public class EventsCalendarPageView extends View {
 
     private static boolean sShouldShowMondayAsFirstDay = true;
 
+    private Paint mDayPaint = new Paint();
+    private Paint mBackground = new Paint();
+
     // Calendars
     private Calendar mTodayCalendar;
     private Calendar mCurrentCalendar;
@@ -78,15 +83,11 @@ public class EventsCalendarPageView extends View {
 
     // Events
     private EventsContainer mEventsContainer;
-
-    private Paint mDayPaint = new Paint();
-    private Paint mBackground = new Paint();
-
-    private List<Integer> mInactiveDaysList = new ArrayList<>();
-
     private EventsCalendarPageViewListener mListener;
 
+    private List<Integer> mInactiveDaysList = new ArrayList<>();
     private CalendarDrawer mCalendarDrawer;
+
 
     private final GestureDetector.SimpleOnGestureListener mGesturelistener = new GestureDetector.SimpleOnGestureListener() {
         @Override

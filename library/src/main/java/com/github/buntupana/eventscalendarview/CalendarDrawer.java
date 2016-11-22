@@ -6,6 +6,9 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 
 import com.github.buntupana.eventscalendarview.domain.Event;
+import com.github.buntupana.eventscalendarview.events.Events;
+import com.github.buntupana.eventscalendarview.events.EventsContainer;
+import com.github.buntupana.eventscalendarview.utils.CalendarUtils;
 
 import java.util.Calendar;
 import java.util.List;
@@ -150,10 +153,10 @@ public class CalendarDrawer {
                     if (mCurrentDayIndicator && isSameYearAsToday && isSameMonthAsToday && todayDayOfMonth == day_month) {
                         drawDayCircleIndicator(mCurrentDayIndicatorStyle, canvas, xPosition, yPosition, mCurrentDayBackgroundColor);
                     } else if (!selectedDay && mInactiveDays.size() != 7) {
-                        if (monthToDrawCalendar.get(Calendar.DAY_OF_MONTH) == day_month && !mInactiveDays.contains(monthToDrawCalendar.get(Calendar.DAY_OF_WEEK)) && isSameMonthAsCurrentCalendar) {
+                        if (monthToDrawCalendar.get(Calendar.DAY_OF_MONTH) == day_month && !CalendarUtils.isInactiveDate(monthToDrawCalendar, mMinDateCalendar, mMaxDateCalendar, mInactiveDays) && isSameMonthAsCurrentCalendar) {
                             drawDayCircleIndicator(mCurrentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, mCurrentSelectedDayBackgroundColor);
                             selectedDay = true;
-                        } else if (mInactiveDays.contains(monthToDrawCalendar.get(Calendar.DAY_OF_WEEK)) && !mInactiveDays.contains(aux.get(Calendar.DAY_OF_WEEK))) {
+                        } else if (CalendarUtils.isInactiveDate(monthToDrawCalendar, mMinDateCalendar, mMaxDateCalendar, mInactiveDays) && !CalendarUtils.isInactiveDate(aux, mMinDateCalendar, mMaxDateCalendar, mInactiveDays)) {
                             drawDayCircleIndicator(mCurrentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, mCurrentSelectedDayBackgroundColor);
                             selectedDay = true;
                         }
@@ -222,7 +225,6 @@ public class CalendarDrawer {
                     int day_week = aux.get(Calendar.DAY_OF_WEEK);
 
                     if (mCurrentDayIndicator && isSameYearAsToday && isSameWeekAsToday && todayDayOfMonth == day_month) {
-                        // TODO calculate position of circle in a more reliable way
                         drawDayCircleIndicator(mCurrentDayIndicatorStyle, canvas, xPosition, yPosition, mCurrentDayBackgroundColor);
                     } else if (!selectedDay && mInactiveDays.size() != 7) {
                         if (weekToDrawCalendar.get(Calendar.DAY_OF_MONTH) == day_month && !mInactiveDays.contains(weekToDrawCalendar.get(Calendar.DAY_OF_WEEK)) && isSameWeekAsCurrentCalendar) {

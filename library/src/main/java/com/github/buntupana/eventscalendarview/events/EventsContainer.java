@@ -1,5 +1,6 @@
-package com.github.buntupana.eventscalendarview;
+package com.github.buntupana.eventscalendarview.events;
 
+import com.github.buntupana.eventscalendarview.CalendarAttr;
 import com.github.buntupana.eventscalendarview.comparators.EventComparator;
 import com.github.buntupana.eventscalendarview.domain.Event;
 
@@ -25,7 +26,7 @@ public class EventsContainer {
         this.CalendarFormat = format;
     }
 
-    void addEvent(Event event) {
+    public void addEvent(Event event) {
         eventsCalendar.setTimeInMillis(event.getTimeInMillis());
         String key = getKeyForCalendarEvent(eventsCalendar);
         List<Events> eventsForKey = eventsByKeyAndYearMap.get(key);
@@ -43,18 +44,18 @@ public class EventsContainer {
         eventsByKeyAndYearMap.put(key, eventsForKey);
     }
 
-    void removeAllEvents() {
+    public void removeAllEvents() {
         eventsByKeyAndYearMap.clear();
     }
 
-    void addEvents(List<Event> events) {
+    public void addEvents(List<Event> events) {
         int count = events.size();
         for (int i = 0; i < count; i++) {
             addEvent(events.get(i));
         }
     }
 
-    List<Event> getEventsFor(long epochMillis) {
+    public List<Event> getEventsFor(long epochMillis) {
         Events events = getEventDayEvent(epochMillis);
         if (events == null) {
             return new ArrayList<>();
@@ -63,11 +64,11 @@ public class EventsContainer {
         }
     }
 
-    List<Events> getEventsForMonthAndYear(int month, int year) {
+    public List<Events> getEventsForMonthAndYear(int month, int year) {
         return getEventsForKeyAndYear(month, year);
     }
 
-    List<Events> getEventsForWeekAndYear(int week, int year) {
+    public List<Events> getEventsForWeekAndYear(int week, int year) {
         return getEventsForKeyAndYear(week, year);
     }
 
@@ -75,7 +76,7 @@ public class EventsContainer {
         return eventsByKeyAndYearMap.get(year + "_" + key);
     }
 
-    List<Event> getEventsForMonth(long eventTimeInMillis) {
+    public List<Event> getEventsForMonth(long eventTimeInMillis) {
         eventsCalendar.setTimeInMillis(eventTimeInMillis);
         String keyForCalendarEvent = getKeyForCalendarEvent(eventsCalendar);
         List<Events> events = eventsByKeyAndYearMap.get(keyForCalendarEvent);
@@ -108,7 +109,7 @@ public class EventsContainer {
         return null;
     }
 
-    void removeEventByEpochMillis(long epochMillis) {
+    public void removeEventByEpochMillis(long epochMillis) {
         eventsCalendar.setTimeInMillis(epochMillis);
         int dayInMonth = eventsCalendar.get(Calendar.DAY_OF_MONTH);
         String key = getKeyForCalendarEvent(eventsCalendar);
@@ -127,7 +128,7 @@ public class EventsContainer {
         }
     }
 
-    void removeEvent(Event event) {
+    public void removeEvent(Event event) {
         eventsCalendar.setTimeInMillis(event.getTimeInMillis());
         String key = getKeyForCalendarEvent(eventsCalendar);
         List<Events> eventsForMonthAndYear = eventsByKeyAndYearMap.get(key);
@@ -142,7 +143,7 @@ public class EventsContainer {
         }
     }
 
-    void removeEvents(List<Event> events) {
+    public void removeEvents(List<Event> events) {
         int count = events.size();
         for (int i = 0; i < count; i++) {
             removeEvent(events.get(i));

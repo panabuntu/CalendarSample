@@ -1,4 +1,4 @@
-package com.github.buntupana.eventscalendarview;
+package com.github.buntupana.eventscalendarview.utils;
 
 import java.util.Calendar;
 import java.util.Date;

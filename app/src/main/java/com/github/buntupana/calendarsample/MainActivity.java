@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ((Button)findViewById(R.id.button)).setOnClickListener(new View.OnClickListener() {
+        ((Button) findViewById(R.id.button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 calendarView.refresh();
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Event> getEvents(long timeInMillis, int day) {
         if (day < 2) {
             return Arrays.asList(new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis)));
-        } else if ( day > 2 && day <= 6) {
+        } else if (day > 2 && day <= 6) {
             return Arrays.asList(
                     new Event(ContextCompat.getColor(this, R.color.status_missing), timeInMillis, "Event at " + new Date(timeInMillis)));
         } else {

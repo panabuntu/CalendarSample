@@ -1,4 +1,4 @@
-package com.github.buntupana.eventscalendarview;
+package com.github.buntupana.eventscalendarview.events;
 
 import com.github.buntupana.eventscalendarview.domain.Event;
 
@@ -15,11 +15,11 @@ public class Events {
         this.events = events;
     }
 
-    long getTimeInMillis() {
+    public long getTimeInMillis() {
         return timeInMillis;
     }
 
-    List<Event> getEvents() {
+    public List<Event> getEvents() {
         return events;
     }
 
