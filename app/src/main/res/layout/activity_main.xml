@@ -26,26 +26,43 @@
         app:eventsCalendarTextSize="12sp"/>
 
     <TextView
-        android:text="TextView"
-        android:layout_marginTop="16dp"
+        android:id="@+id/textDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textDate"
+        android:layout_marginTop="16dp"
+        android:text="TextView"
         android:textSize="24sp"/>
 
     <TextView
-        android:text="TextView"
-        android:layout_marginTop="16dp"
+        android:id="@+id/textDay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textDay"
+        android:layout_marginTop="16dp"
+        android:text="TextView"
         android:textSize="24sp"/>
 
     <Button
-        android:text="Button"
-        android:layout_marginTop="16dp"
+        android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button"/>
+        android:layout_marginTop="16dp"
+        android:text="Button"/>
+
+    <com.github.buntupana.eventscalendarview.EventsCalendarView
+        android:id="@+id/calendarWeekly"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:layout_marginTop="16dp"
+        app:eventsCalendarBackgroundColor="#2a9dc9"
+        app:eventsCalendarCurrentDayBackgroundColor="#B71C1C"
+        app:eventsCalendarCurrentDayIndicator="false"
+        app:eventsCalendarCurrentDayIndicatorStyle="fill_large_indicator"
+        app:eventsCalendarCurrentSelectedDayBackgroundColor="#ffbd5f5f"
+        app:eventsCalendarDefaultSelectedPresentDay="true"
+        app:eventsCalendarEventIndicatorStyle="small_indicator"
+        app:eventsCalendarFormat="weekly"
+        app:eventsCalendarTargetHeight="80dp"
+        app:eventsCalendarTextColor="#fff"
+        app:eventsCalendarTextSize="12sp"/>
 
 </LinearLayout>

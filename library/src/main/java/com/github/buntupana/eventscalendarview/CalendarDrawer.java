@@ -228,7 +228,7 @@ public class CalendarDrawer {
                         if (weekToDrawCalendar.get(Calendar.DAY_OF_MONTH) == day_month && !CalendarUtils.isInactiveDate(weekToDrawCalendar, mMinDateCalendar, mMaxDateCalendar, mInactiveDays) && isSameWeekAsCurrentCalendar) {
                             drawDayCircleIndicator(mCurrentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, mCurrentSelectedDayBackgroundColor);
                             selectedDay = true;
-                        } else if (CalendarUtils.isInactiveDate(weekToDrawCalendar, mMinDateCalendar, mMaxDateCalendar, mInactiveDays) && CalendarUtils.isInactiveDate(aux, mMinDateCalendar, mMaxDateCalendar, mInactiveDays)) {
+                        } else if (CalendarUtils.isInactiveDate(weekToDrawCalendar, mMinDateCalendar, mMaxDateCalendar, mInactiveDays) && !CalendarUtils.isInactiveDate(aux, mMinDateCalendar, mMaxDateCalendar, mInactiveDays)) {
                             drawDayCircleIndicator(mCurrentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, mCurrentSelectedDayBackgroundColor);
                             selectedDay = true;
                         }

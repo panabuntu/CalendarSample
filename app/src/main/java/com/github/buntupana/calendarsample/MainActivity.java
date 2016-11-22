@@ -14,6 +14,7 @@ import com.github.buntupana.eventscalendarview.domain.Event;
 import com.github.buntupana.eventscalendarview.listeners.EventsCalendarViewListener;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private final String TAG = MainActivity.class.getSimpleName();
 
     private EventsCalendarView calendarView;
+    private EventsCalendarView calendarWeeklyView;
     private TextView textDate;
     private TextView textDay;
     private SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy");
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         calendarView = (EventsCalendarView) findViewById(calendar);
+        calendarWeeklyView = (EventsCalendarView) findViewById(R.id.calendarWeekly);
         textDate = (TextView) findViewById(R.id.textDate);
         textDay = (TextView) findViewById(R.id.textDay);
 
@@ -49,13 +52,17 @@ public class MainActivity extends AppCompatActivity {
 
 //        calendarView.add(Calendar.MONTH, 1);
 //        calendarView.setMinDate(minDate.getTime());
+        calendar.setMinimalDaysInFirstWeek(1);
+        maxDate.setMinimalDaysInFirstWeek(1);
 
         addEvents(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
         addEvents(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
         addEvents(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
 
         calendarView.setMinDate(minDate.getTime());
-//        calendarView.setMaxDate(maxDate.getTime());
+        calendarWeeklyView.setMinDate(minDate.getTime());
+        calendarView.setMaxDate(maxDate.getTime());
+        calendarWeeklyView.setMaxDate(maxDate.getTime());
 
         calendarView.setListener(new EventsCalendarViewListener() {
             @Override
@@ -83,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         currentCalender.set(Calendar.DAY_OF_MONTH, 1);
 //        currentCalender.setFirstDayOfWeek(Calendar.MONDAY);
         Date firstDayOfMonth = currentCalender.getTime();
+        List<Event> events = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             currentCalender.setTime(firstDayOfMonth);
             if (month > -1) {
@@ -96,11 +104,11 @@ public class MainActivity extends AppCompatActivity {
 //            setToMidnight(currentCalender);
             long timeInMillis = currentCalender.getTimeInMillis();
 
-            List<Event> events = getEvents(timeInMillis, i);
+            events.addAll(getEvents(timeInMillis, i));
 
-            calendarView.addEvents(events);
-//            mCompactCalendarViewMonthly.addEvents(events);
         }
+        //            mCompactCalendarViewMonthly.addEvents(events);
+        calendarView.addEvents(events);
     }
 
     private List<Event> getEvents(long timeInMillis, int day) {

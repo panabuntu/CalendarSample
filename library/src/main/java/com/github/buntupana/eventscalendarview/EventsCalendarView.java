@@ -119,16 +119,18 @@ public class EventsCalendarView extends RelativeLayout {
                         mPagerAdapter.addView((getView(mNextCalendar.getTime(), false)));
                     }
 
-                    mCurrentCalendar.setTime(((EventsCalendarPageView) mPagerAdapter.getView(position)).getCurrentDate());
-                    ((EventsCalendarPageView) mPagerAdapter.getView(position)).setShouldSelect(true);
-                    if(position != 0){
-                        ((EventsCalendarPageView) mPagerAdapter.getView(position-1)).setShouldSelect(false);
-                    }
-                    if(mPagerAdapter.getCount() > position){
-                        ((EventsCalendarPageView) mPagerAdapter.getView(position+1)).setShouldSelect(false);
-                    }
-                    if (mListener != null) {
-                        mListener.onMonthScroll(mCurrentCalendar.getTime());
+                    if (mPager.getCurrentItem() == position) {
+                        mCurrentCalendar.setTime(((EventsCalendarPageView) mPagerAdapter.getView(position)).getCurrentDate());
+                        ((EventsCalendarPageView) mPagerAdapter.getView(position)).selectCurrentDate(true);
+                        if (position != 0) {
+                            ((EventsCalendarPageView) mPagerAdapter.getView(position - 1)).selectCurrentDate(false);
+                        }
+                        if (mPagerAdapter.getCount() > position + 1) {
+                            ((EventsCalendarPageView) mPagerAdapter.getView(position + 1)).selectCurrentDate(false);
+                        }
+                        if (mListener != null) {
+                            mListener.onMonthScroll(mCurrentCalendar.getTime());
+                        }
                     }
                 }
             }
@@ -179,16 +181,10 @@ public class EventsCalendarView extends RelativeLayout {
     }
 
     public void setCurrentDate(Date date) {
-        if (date == null) {
-            mCurrentCalendar = Calendar.getInstance();
-        }
-//        else if (mMinCalendar != null && mMinCalendar.getTimeInMillis() < date.getTime()) {
-//            throw new IllegalArgumentException("This date is less than minimal limit");
-//        } else if (mMaxCalendar != null && date.getTime() > mMaxCalendar.getTimeInMillis()) {
-//            throw new IllegalArgumentException("This date is greatest than maximum limit");
-//        }
-        else {
 
+        mCurrentCalendar = CalendarUtils.getCalendar(date, shouldShowMondayAsFirstDay, mTimeZone, mLocale);
+
+        if (date != null) {
             mCurrentCalendar.setTime(date);
             resetHour(mCurrentCalendar);
             mPreviousCalendar.setTimeInMillis(mCurrentCalendar.getTimeInMillis());
@@ -237,7 +233,7 @@ public class EventsCalendarView extends RelativeLayout {
             result = false;
         } else {
             boolean isLessOrEqualYear = mPreviousCalendar.get(Calendar.YEAR) <= mMinCalendar.get(Calendar.YEAR);
-            boolean isLessOrEqualUnit = mPreviousCalendar.get(mCalendarUnit) <= mMinCalendar.get(mCalendarUnit);
+            boolean isLessOrEqualUnit = mPreviousCalendar.get(mCalendarUnit) < mMinCalendar.get(mCalendarUnit);
             result = isLessOrEqualYear && isLessOrEqualUnit;
         }
         return result;
@@ -251,7 +247,7 @@ public class EventsCalendarView extends RelativeLayout {
             result = false;
         } else {
             boolean isGreaterOrEqualYear = mNextCalendar.get(Calendar.YEAR) >= mMaxCalendar.get(Calendar.YEAR);
-            boolean isGreaterOrEqualUnit = mNextCalendar.get(mCalendarUnit) >= mMaxCalendar.get(mCalendarUnit);
+            boolean isGreaterOrEqualUnit = mNextCalendar.get(mCalendarUnit) > mMaxCalendar.get(mCalendarUnit);
             result = isGreaterOrEqualYear && isGreaterOrEqualUnit;
         }
         return result;

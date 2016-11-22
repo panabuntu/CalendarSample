@@ -539,7 +539,7 @@ public class EventsCalendarPageView extends View {
         return mShouldSelect;
     }
 
-    public void setShouldSelect(boolean shouldSelect) {
+    public void selectCurrentDate(boolean shouldSelect) {
         mShouldSelect = shouldSelect;
         if(shouldSelect) {
             if (mCalendarAttr.getCalendarFormat() == CalendarAttr.MONTHLY) {
