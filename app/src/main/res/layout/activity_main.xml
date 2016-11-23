@@ -65,4 +65,12 @@
         app:eventsCalendarTextColor="#fff"
         app:eventsCalendarTextSize="12sp"/>
 
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="TextView"
+        android:textSize="24sp"/>
+
 </LinearLayout>

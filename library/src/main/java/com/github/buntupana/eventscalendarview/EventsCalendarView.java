@@ -129,7 +129,8 @@ public class EventsCalendarView extends RelativeLayout {
                             ((EventsCalendarPageView) mPagerAdapter.getView(position + 1)).selectCurrentDate(false);
                         }
                         if (mListener != null) {
-                            mListener.onMonthScroll(mCurrentCalendar.getTime());
+                            mListener.onPageScroll(mCurrentCalendar.getTime(), mCurrentCalendar.get(Calendar.DAY_OF_MONTH), CalendarUtils.getMonth(mCurrentCalendar, mCalendarAttr.getCalendarFormat(), mLocale),
+                                    CalendarUtils.getYear(mCurrentCalendar, mCalendarAttr.getCalendarFormat(), mLocale));
                         }
                     }
                 }
@@ -180,6 +181,10 @@ public class EventsCalendarView extends RelativeLayout {
         calendar.set(Calendar.MILLISECOND, 0);
     }
 
+    public Date getCurrentDate(){
+        return mCurrentCalendar.getTime();
+    }
+
     public void setCurrentDate(Date date) {
 
         mCurrentCalendar = CalendarUtils.getCalendar(date, shouldShowMondayAsFirstDay, mTimeZone, mLocale);
@@ -205,21 +210,49 @@ public class EventsCalendarView extends RelativeLayout {
     public void setMinDate(Date date) {
         if (date == null) {
             mMinCalendar = null;
+        } else if (mMaxCalendar != null && date.getTime() > mMaxCalendar.getTimeInMillis()) {
+            throw new IllegalArgumentException("Min time can't be greatest than Max time");
         } else {
             mMinCalendar = CalendarUtils.initCalendar(shouldShowMondayAsFirstDay, mTimeZone, mLocale);
             mMinCalendar.setTime(date);
             resetHour(mMinCalendar);
         }
+
         refresh();
     }
 
     public void setMaxDate(Date date) {
         if (date == null) {
             mMaxCalendar = null;
+        } else if (mMinCalendar != null && date.getTime() < mMinCalendar.getTimeInMillis()) {
+            throw new IllegalArgumentException("Max time can't be less than Min time");
         } else {
             mMaxCalendar = CalendarUtils.initCalendar(shouldShowMondayAsFirstDay, mTimeZone, mLocale);
-            mMaxCalendar.setFirstDayOfWeek(Calendar.MONDAY);
             mMaxCalendar.setTime(date);
+            resetHour(mMaxCalendar);
+        }
+        refresh();
+    }
+
+    public void setLimitInterval(Date minDate, Date maxDate) {
+
+        if (minDate != null && maxDate != null && minDate.getTime() > maxDate.getTime()) {
+            throw new IllegalArgumentException("Max time can't be less than Min time");
+        }
+
+        if (minDate == null) {
+            mMinCalendar = null;
+        } else {
+            mMinCalendar = CalendarUtils.initCalendar(shouldShowMondayAsFirstDay, mTimeZone, mLocale);
+            mMinCalendar.setTime(minDate);
+            resetHour(mMinCalendar);
+        }
+
+        if(maxDate == null) {
+            mMaxCalendar = null;
+        } else {
+            mMaxCalendar = CalendarUtils.initCalendar(shouldShowMondayAsFirstDay, mTimeZone, mLocale);
+            mMaxCalendar.setTime(maxDate);
             resetHour(mMaxCalendar);
         }
         refresh();
@@ -239,20 +272,6 @@ public class EventsCalendarView extends RelativeLayout {
         return result;
     }
 
-    private boolean isMaxDateLimitReached() {
-
-        boolean result;
-
-        if (mMaxCalendar == null) {
-            result = false;
-        } else {
-            boolean isGreaterOrEqualYear = mNextCalendar.get(Calendar.YEAR) >= mMaxCalendar.get(Calendar.YEAR);
-            boolean isGreaterOrEqualUnit = mNextCalendar.get(mCalendarUnit) > mMaxCalendar.get(mCalendarUnit);
-            result = isGreaterOrEqualYear && isGreaterOrEqualUnit;
-        }
-        return result;
-    }
-
     public void setShouldShowMondayAsFirstDay(boolean shouldShowMondayAsFirstDay) {
         this.shouldShowMondayAsFirstDay = shouldShowMondayAsFirstDay;
         if (shouldShowMondayAsFirstDay) {
@@ -267,9 +286,23 @@ public class EventsCalendarView extends RelativeLayout {
         refresh();
     }
 
+    private boolean isMaxDateLimitReached() {
+
+        boolean result;
+
+        if (mMaxCalendar == null) {
+            result = false;
+        } else {
+            boolean isGreaterOrEqualYear = mNextCalendar.get(Calendar.YEAR) >= mMaxCalendar.get(Calendar.YEAR);
+            boolean isGreaterOrEqualUnit = mNextCalendar.get(mCalendarUnit) >= mMaxCalendar.get(mCalendarUnit);
+            result = isGreaterOrEqualYear && isGreaterOrEqualUnit;
+        }
+        return result;
+    }
+
     public void setListener(EventsCalendarViewListener listener) {
         mListener = listener;
-        invalidate();
+        refresh();
     }
 
     public void setLocale(TimeZone timeZone, Locale locale) {
@@ -316,5 +349,9 @@ public class EventsCalendarView extends RelativeLayout {
     public void addEvents(List<Event> events) {
         mEventsContainer.addEvents(events);
         refresh();
+    }
+
+    public String getDateString(){
+        return CalendarUtils.getDate(mCurrentCalendar, mCalendarAttr.getCalendarFormat(), mLocale);
     }
 }

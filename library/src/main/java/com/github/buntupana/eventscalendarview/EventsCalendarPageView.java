@@ -21,6 +21,7 @@ import com.github.buntupana.eventscalendarview.listeners.EventsCalendarPageViewL
 import com.github.buntupana.eventscalendarview.utils.CalendarUtils;
 
 import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -90,6 +91,8 @@ public class EventsCalendarPageView extends View {
     private List<Integer> mInactiveDaysList = new ArrayList<>();
     private CalendarDrawer mCalendarDrawer;
 
+    private SimpleDateFormat sdfMonth = new SimpleDateFormat("MMM");
+    private SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
 
     private final GestureDetector.SimpleOnGestureListener mGesturelistener = new GestureDetector.SimpleOnGestureListener() {
         @Override
@@ -115,7 +118,8 @@ public class EventsCalendarPageView extends View {
                     invalidate();
                     Log.d(TAG, "Day selected");
                     if (mListener != null) {
-                        mListener.onDayClick(mCurrentCalendar.getTime());
+                        mListener.onDayClick(mCurrentCalendar.getTime(), mCurrentCalendar.get(Calendar.DAY_OF_MONTH),
+                                sdfMonth.format(mCurrentCalendar.getTime()), sdfYear.format(mCurrentCalendar.getTime()));
                     }
                 } else {
                     mCurrentCalendar.setTimeInMillis(currentTime);

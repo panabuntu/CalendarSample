@@ -13,7 +13,6 @@ import com.github.buntupana.eventscalendarview.EventsCalendarView;
 import com.github.buntupana.eventscalendarview.domain.Event;
 import com.github.buntupana.eventscalendarview.listeners.EventsCalendarViewListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -29,10 +28,9 @@ public class MainActivity extends AppCompatActivity {
 
     private EventsCalendarView calendarView;
     private EventsCalendarView calendarWeeklyView;
-    private TextView textDate;
+    private TextView textDateMonth;
+    private TextView textDateWeek;
     private TextView textDay;
-    private SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy");
-    private SimpleDateFormat sdf2 = new SimpleDateFormat("dd MMM yyyy");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,40 +38,46 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         calendarView = (EventsCalendarView) findViewById(calendar);
         calendarWeeklyView = (EventsCalendarView) findViewById(R.id.calendarWeekly);
-        textDate = (TextView) findViewById(R.id.textDate);
+        textDateMonth = (TextView) findViewById(R.id.textDate);
+        textDateWeek = (TextView) findViewById(R.id.textView2);
         textDay = (TextView) findViewById(R.id.textDay);
 
         Calendar calendar = Calendar.getInstance();
         Calendar minDate = Calendar.getInstance();
         Calendar maxDate = Calendar.getInstance();
 
-        minDate.set(Calendar.DAY_OF_MONTH, 3);
+        minDate.set(Calendar.DAY_OF_MONTH, 24);
         maxDate.set(Calendar.DAY_OF_MONTH, 24);
 
-//        calendarView.add(Calendar.MONTH, 1);
-//        calendarView.setMinDate(minDate.getTime());
-        calendar.setMinimalDaysInFirstWeek(1);
-        maxDate.setMinimalDaysInFirstWeek(1);
-
         addEvents(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
         addEvents(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
         addEvents(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
 
-        calendarView.setMinDate(minDate.getTime());
-        calendarWeeklyView.setMinDate(minDate.getTime());
-        calendarView.setMaxDate(maxDate.getTime());
-        calendarWeeklyView.setMaxDate(maxDate.getTime());
+//        calendarView.setLimitInterval(minDate.getTime(), maxDate.getTime());
+//        calendarWeeklyView.setLimitInterval(minDate.getTime(), null);
 
         calendarView.setListener(new EventsCalendarViewListener() {
             @Override
-            public void onMonthScroll(Date firstDayOfNewMonth) {
-                textDate.setText(sdf.format(firstDayOfNewMonth));
+            public void onPageScroll(Date firstDayOfNewPage, int day, String month, String year) {
+                textDateMonth.setText(month + " " + year);
             }
 
             @Override
-            public void onDayClick(Date dateClicked) {
+            public void onDayClick(Date dateClicked, int day, String month, String year) {
                 Log.d(TAG, "onDayClick: " + dateClicked);
-                textDay.setText("onDayClick: " + sdf2.format(dateClicked));
+                textDay.setText(day + " " + month + " " + year);
+            }
+        });
+
+        calendarWeeklyView.setListener(new EventsCalendarViewListener() {
+            @Override
+            public void onPageScroll(Date firstDayOfNewPage, int day, String month, String year) {
+                textDateWeek.setText(month + " " + year);
+            }
+
+            @Override
+            public void onDayClick(Date dateClicked, int day, String month, String year) {
+
             }
         });
 
