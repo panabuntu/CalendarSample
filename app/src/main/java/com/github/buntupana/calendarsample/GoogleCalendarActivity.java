@@ -3,7 +3,6 @@ package com.github.buntupana.calendarsample;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,7 +18,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class GoogleCalendarActivity extends AppCompatActivity {
+public class GoogleCalendarActivity extends NavBaseActivity {
 
     private final String TAG = GoogleCalendarActivity.class.getSimpleName();
 
@@ -49,7 +48,7 @@ public class GoogleCalendarActivity extends AppCompatActivity {
 
         setSupportActionBar(mToolbar);
 
-        mTitle.setText(mCalendarView.getPageTitle());
+                mTitle.setText(mCalendarView.getPageTitle());
         mTextDate.setText(new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(mCalendarView.getCurrentDate().getTime()));
 
         mCalendarView.setListener(new EventsCalendarViewListener() {
@@ -77,7 +76,7 @@ public class GoogleCalendarActivity extends AppCompatActivity {
                 int maxVerticalOffset = Math.abs(appBarLayout.getTotalScrollRange());
                 float angle = (Math.abs(verticalOffset) * 180 / maxVerticalOffset) + 180;
                 mDatePikerArrow.setRotation(angle);
-                if(angle == 180){
+                if (angle == 180) {
                     isExpanded = true;
                     appBarLayout.setActivated(false);
                 } else if (angle == 360) {
@@ -89,7 +88,7 @@ public class GoogleCalendarActivity extends AppCompatActivity {
         addEvents();
     }
 
-    private void addEvents(){
+    private void addEvents() {
         mCalendar.setTime(mCalendarView.getCurrentDate());
         mCalendar.set(Calendar.DAY_OF_MONTH, 3);
         mCalendarView.addEvent(new Event(ContextCompat.getColor(this, R.color.eventColor1), mCalendar.getTimeInMillis()), true);
@@ -120,7 +119,7 @@ public class GoogleCalendarActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
             return true;
-        } else if(id == R.id.action_current_day){
+        } else if (id == R.id.action_current_day) {
             mCalendarView.setSelectedDate(new Date(), true);
         }
 

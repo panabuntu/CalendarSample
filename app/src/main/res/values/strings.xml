@@ -7,4 +7,7 @@
 
     <string name="action_refresh">Refresh</string>
     <string name="action_current_day">Current day</string>
+    <string name="title_activity_nav_base">NavBaseActivity</string>
+
+    <string name="action_settings">Settings</string>
 </resources>
