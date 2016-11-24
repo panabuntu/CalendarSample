@@ -17,7 +17,9 @@
         <attr name="eventsCalendarTextSize" format="dimension"/>
         <attr name="eventsCalendarBackgroundColor" format="color"/>
         <attr name="eventsCalendarCurrentDayBackgroundColor" format="color"/>
+        <attr name="eventsCalendarCurrentDayTextColor" format="color"/>
         <attr name="eventsCalendarCurrentSelectedDayBackgroundColor" format="color"/>
+        <attr name="eventsCalendarCurrentSelectedDayTextColor" format="color"/>
         <attr name="eventsCalendarTextColor" format="color"/>
         <attr name="eventsCalendarMultiEventIndicatorColor" format="color"/>
         <attr name="eventsCalendarTargetHeight" format="dimension"/>

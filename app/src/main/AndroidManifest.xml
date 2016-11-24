@@ -19,7 +19,7 @@
         </activity>
         <activity
             android:name=".GoogleCalendarActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar.GoogleCalendar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

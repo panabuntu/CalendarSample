@@ -30,12 +30,6 @@ public class CalendarDrawer {
 
     //Style
     private Paint mDayPaint;
-    private int mCalendarTextColor;
-    private boolean mCurrentDayIndicator;
-    private int mCurrentDayIndicatorStyle;
-    private int mCurrentSelectedDayIndicatorStyle;
-    private int mCurrentSelectedDayBackgroundColor;
-    private int mCurrentDayBackgroundColor;
 
     // Events
     private float mBigCircleIndicatorRadius;
@@ -48,56 +42,49 @@ public class CalendarDrawer {
     private Calendar mEventsCalendar;
     private boolean mShouldDrawIndicatorsBelowSelectedDays;
     private int mTextHeight;
-    private int mEventIndicatorStyle;
     private float mSmallIndicatorRadius;
-    private int mMultiEventIndicatorColor;
     private float mMultiDayIndicatorStrokeWidth;
     private Calendar mMinDateCalendar;
     private Calendar mMaxDateCalendar;
     private boolean mShouldShowMondayAsFirstDay;
     private float mXIndicatorOffset;
 
+    private CalendarAttr mCalendarAttr;
 
     public CalendarDrawer(int heightPerDay, int paddingHeight, int widthPerDay, int paddingWidth, int paddingRight,
-                          int paddingLeft, float screenDensity, Paint dayPaint, int calendarTextColor, boolean currentDayIndicator,
-                          int currentDayIndicatorStyle, int currentSelectedDayIndicatorStyle, int currentSelectedDayBackgroundColor,
-                          int currentDayBackgroundColor, float bigCircleIndicatorRadius, EventsContainer eventsContainer, boolean shouldDrawDaysHeader,
-                          Calendar todayCalendar, List<Integer> inactiveDays, String[] dayColumnNames, Calendar eventsCalendar,
-                          boolean shouldDrawIndicatorsBelowSelectedDays, int textHeight, int eventIndicatorStyle, float smallIndicatorRadius,
-                          int multiEventIndicatorColor, float multiDayIndicatorStrokeWidth, Calendar minDateCalendar, Calendar maxDateCalendar,
-                          boolean shouldShowMondayAsFirstDay, float xIndicatorOffset) {
+                          int paddingLeft, float screenDensity, Paint dayPaint,
 
-        this.mHeightPerDay = heightPerDay;
-        this.mPaddingHeight = paddingHeight;
-        this.mWidthPerDay = widthPerDay;
-        this.mPaddingWidth = paddingWidth;
-        this.mPaddingRight = paddingRight;
-        this.mPaddingLeft = paddingLeft;
-        this.mScreenDensity = screenDensity;
-        this.mDayPaint = dayPaint;
-        this.mCalendarTextColor = calendarTextColor;
-        this.mCurrentDayIndicator = currentDayIndicator;
-        this.mCurrentDayIndicatorStyle = currentDayIndicatorStyle;
-        this.mCurrentSelectedDayIndicatorStyle = currentSelectedDayIndicatorStyle;
-        this.mCurrentSelectedDayBackgroundColor = currentSelectedDayBackgroundColor;
-        this.mCurrentDayBackgroundColor = currentDayBackgroundColor;
-        this.mBigCircleIndicatorRadius = bigCircleIndicatorRadius;
-        this.mEventsContainer = eventsContainer;
-        this.shouldDrmShouldDrawDaysHeaderwDaysHeader = shouldDrawDaysHeader;
-        this.mTodayCalendar = todayCalendar;
-        this.mInactiveDays = inactiveDays;
-        this.mDayColumnNames = dayColumnNames;
-        this.mEventsCalendar = eventsCalendar;
-        this.mShouldDrawIndicatorsBelowSelectedDays = shouldDrawIndicatorsBelowSelectedDays;
-        this.mTextHeight = textHeight;
-        this.mEventIndicatorStyle = eventIndicatorStyle;
-        this.mSmallIndicatorRadius = smallIndicatorRadius;
-        this.mMultiEventIndicatorColor = multiEventIndicatorColor;
-        this.mMultiDayIndicatorStrokeWidth = multiDayIndicatorStrokeWidth;
-        this.mMinDateCalendar = minDateCalendar;
-        this.mMaxDateCalendar = maxDateCalendar;
-        this.mShouldShowMondayAsFirstDay = shouldShowMondayAsFirstDay;
-        this.mXIndicatorOffset = xIndicatorOffset;
+                          float bigCircleIndicatorRadius, EventsContainer eventsContainer, boolean shouldDrawDaysHeader,
+                          Calendar todayCalendar, List<Integer> inactiveDays, String[] dayColumnNames, Calendar eventsCalendar,
+                          boolean shouldDrawIndicatorsBelowSelectedDays, int textHeight, float smallIndicatorRadius,
+                          float multiDayIndicatorStrokeWidth, Calendar minDateCalendar, Calendar maxDateCalendar,
+                          boolean shouldShowMondayAsFirstDay, float xIndicatorOffset, CalendarAttr calendarAttr) {
+
+        mHeightPerDay = heightPerDay;
+        mPaddingHeight = paddingHeight;
+        mWidthPerDay = widthPerDay;
+        mPaddingWidth = paddingWidth;
+        mPaddingRight = paddingRight;
+        mPaddingLeft = paddingLeft;
+        mScreenDensity = screenDensity;
+        mDayPaint = dayPaint;
+        mBigCircleIndicatorRadius = bigCircleIndicatorRadius;
+        mEventsContainer = eventsContainer;
+        shouldDrmShouldDrawDaysHeaderwDaysHeader = shouldDrawDaysHeader;
+        mTodayCalendar = todayCalendar;
+        mInactiveDays = inactiveDays;
+        mDayColumnNames = dayColumnNames;
+        mEventsCalendar = eventsCalendar;
+        mShouldDrawIndicatorsBelowSelectedDays = shouldDrawIndicatorsBelowSelectedDays;
+        mTextHeight = textHeight;
+        mSmallIndicatorRadius = smallIndicatorRadius;
+        mMultiDayIndicatorStrokeWidth = multiDayIndicatorStrokeWidth;
+        mMinDateCalendar = minDateCalendar;
+        mMaxDateCalendar = maxDateCalendar;
+        mShouldShowMondayAsFirstDay = shouldShowMondayAsFirstDay;
+        mXIndicatorOffset = xIndicatorOffset;
+        mCalendarAttr = calendarAttr;
+
     }
 
     void drawMonth(Canvas canvas, Calendar monthToDrawCalendar, boolean shouldSelect) {
@@ -107,6 +94,8 @@ public class CalendarDrawer {
         aux.setTimeInMillis(monthToDrawCalendar.getTimeInMillis());
         aux.setFirstDayOfWeek(monthToDrawCalendar.getFirstDayOfWeek());
         aux.set(Calendar.DAY_OF_MONTH, 1);
+
+        int textColor;
 
         //offset by one because of 0 index based calculations
         boolean isSameMonthAsToday = monthToDrawCalendar.get(Calendar.MONTH) == mTodayCalendar.get(Calendar.MONTH);
@@ -128,10 +117,10 @@ public class CalendarDrawer {
                 if (row == 0) {
                     // first row, so draw the first letter of the day
                     if (shouldDrmShouldDrawDaysHeaderwDaysHeader) {
-                        mDayPaint.setColor(mCalendarTextColor);
+                        mDayPaint.setColor(mCalendarAttr.getCalendarTextColor());
                         mDayPaint.setTypeface(Typeface.DEFAULT_BOLD);
                         mDayPaint.setStyle(Paint.Style.FILL);
-                        mDayPaint.setColor(mCalendarTextColor);
+                        mDayPaint.setColor(mCalendarAttr.getCalendarTextColor());
                         canvas.drawText(mDayColumnNames[column], xPosition, mPaddingHeight, mDayPaint);
                         mDayPaint.setTypeface(Typeface.DEFAULT);
                     }
@@ -150,20 +139,27 @@ public class CalendarDrawer {
                         continue;
                     }
 
-                    if (mCurrentDayIndicator && isSameYearAsToday && isSameMonthAsToday && todayDayOfMonth == day_month) {
-                        drawDayCircleIndicator(mCurrentDayIndicatorStyle, canvas, xPosition, yPosition, mCurrentDayBackgroundColor);
+                    if (mCalendarAttr.isCurrentDayIndicator() && isSameYearAsToday && isSameMonthAsToday && todayDayOfMonth == day_month) {
+                        drawDayCircleIndicator(mCalendarAttr.getCurrentDayIndicatorStyle(), canvas, xPosition, yPosition, mCalendarAttr.getCurrentDayBackgroundColor());
+                        textColor = mCalendarAttr.getCurrentDayTextColor();
                     } else if (!selectedDay && mInactiveDays.size() != 7 && shouldSelect) {
                         if (monthToDrawCalendar.get(Calendar.DAY_OF_MONTH) == day_month && !CalendarUtils.isInactiveDate(monthToDrawCalendar, mMinDateCalendar, mMaxDateCalendar, mInactiveDays) && isSameMonthAsCurrentCalendar) {
-                            drawDayCircleIndicator(mCurrentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, mCurrentSelectedDayBackgroundColor);
+                            drawDayCircleIndicator(mCalendarAttr.getCurrentSelectedDayIndicatorStyle(), canvas, xPosition, yPosition, mCalendarAttr.getCurrentSelectedDayBackgroundColor());
                             selectedDay = true;
+                            textColor = mCalendarAttr.getCurrentSelectedDayTextColor();
                         } else if (CalendarUtils.isInactiveDate(monthToDrawCalendar, mMinDateCalendar, mMaxDateCalendar, mInactiveDays) && !CalendarUtils.isInactiveDate(aux, mMinDateCalendar, mMaxDateCalendar, mInactiveDays)) {
-                            drawDayCircleIndicator(mCurrentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, mCurrentSelectedDayBackgroundColor);
+                            drawDayCircleIndicator(mCalendarAttr.getCurrentSelectedDayIndicatorStyle(), canvas, xPosition, yPosition, mCalendarAttr.getCurrentSelectedDayBackgroundColor());
                             selectedDay = true;
+                            textColor = mCalendarAttr.getCurrentSelectedDayTextColor();
+                        } else {
+                            textColor = mCalendarAttr.getCalendarTextColor();
                         }
+                    } else {
+                        textColor = mCalendarAttr.getCalendarTextColor();
                     }
 
                     mDayPaint.setStyle(Paint.Style.FILL);
-                    mDayPaint.setColor(mCalendarTextColor);
+                    mDayPaint.setColor(textColor);
                     if (CalendarUtils.isInactiveDate(aux, mMinDateCalendar, mMaxDateCalendar, mInactiveDays)) {
                         mDayPaint.setAlpha(127);
                     }
@@ -185,6 +181,8 @@ public class CalendarDrawer {
         Calendar aux = Calendar.getInstance();
         aux.setFirstDayOfWeek(weekToDrawCalendar.getFirstDayOfWeek());
         aux.setTimeInMillis(weekToDrawCalendar.getTimeInMillis());
+
+        int textColor;
         //offset by one because we want to start from Monday
 
         //offset by one because of 0 index based calculations
@@ -196,7 +194,6 @@ public class CalendarDrawer {
         boolean selectedDay = false;
         for (int column = 0; column < mDayColumnNames.length; column++) {
 
-//            float xPosition = mWidthPerDay * column + (mPaddingWidth + mPaddingLeft + accumulatedScrollOffset.x + offset - mPaddingRight);
             float xPosition = mWidthPerDay * column + (mPaddingWidth + mPaddingLeft + mPaddingRight);
 
             for (int row = 0; row < 2; row++) {
@@ -206,10 +203,10 @@ public class CalendarDrawer {
                 if (row == 0) {
                     // first row, so draw the first letter of the day
                     if (shouldDrmShouldDrawDaysHeaderwDaysHeader) {
-                        mDayPaint.setColor(mCalendarTextColor);
+                        mDayPaint.setColor(mCalendarAttr.getCalendarTextColor());
                         mDayPaint.setTypeface(Typeface.DEFAULT_BOLD);
                         mDayPaint.setStyle(Paint.Style.FILL);
-                        mDayPaint.setColor(mCalendarTextColor);
+                        mDayPaint.setColor(mCalendarAttr.getCalendarTextColor());
                         canvas.drawText(mDayColumnNames[column], xPosition, mPaddingHeight, mDayPaint);
                         mDayPaint.setTypeface(Typeface.DEFAULT);
                     }
@@ -222,20 +219,27 @@ public class CalendarDrawer {
                     }
                     int day_month = aux.get(Calendar.DAY_OF_MONTH);
 
-                    if (mCurrentDayIndicator && isSameYearAsToday && isSameWeekAsToday && todayDayOfMonth == day_month) {
-                        drawDayCircleIndicator(mCurrentDayIndicatorStyle, canvas, xPosition, yPosition, mCurrentDayBackgroundColor);
+                    if (mCalendarAttr.isCurrentDayIndicator() && isSameYearAsToday && isSameWeekAsToday && todayDayOfMonth == day_month) {
+                        drawDayCircleIndicator(mCalendarAttr.getCurrentDayIndicatorStyle(), canvas, xPosition, yPosition, mCalendarAttr.getCurrentDayBackgroundColor());
+                        textColor = mCalendarAttr.getCurrentDayTextColor();
                     } else if (!selectedDay && mInactiveDays.size() != 7 && shouldSelect) {
                         if (weekToDrawCalendar.get(Calendar.DAY_OF_MONTH) == day_month && !CalendarUtils.isInactiveDate(weekToDrawCalendar, mMinDateCalendar, mMaxDateCalendar, mInactiveDays) && isSameWeekAsCurrentCalendar) {
-                            drawDayCircleIndicator(mCurrentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, mCurrentSelectedDayBackgroundColor);
+                            drawDayCircleIndicator(mCalendarAttr.getCurrentSelectedDayIndicatorStyle(), canvas, xPosition, yPosition, mCalendarAttr.getCurrentSelectedDayBackgroundColor());
                             selectedDay = true;
+                            textColor = mCalendarAttr.getCurrentSelectedDayTextColor();
                         } else if (CalendarUtils.isInactiveDate(weekToDrawCalendar, mMinDateCalendar, mMaxDateCalendar, mInactiveDays) && !CalendarUtils.isInactiveDate(aux, mMinDateCalendar, mMaxDateCalendar, mInactiveDays)) {
-                            drawDayCircleIndicator(mCurrentSelectedDayIndicatorStyle, canvas, xPosition, yPosition, mCurrentSelectedDayBackgroundColor);
+                            drawDayCircleIndicator(mCalendarAttr.getCurrentSelectedDayIndicatorStyle(), canvas, xPosition, yPosition, mCalendarAttr.getCurrentSelectedDayBackgroundColor());
                             selectedDay = true;
+                            textColor = mCalendarAttr.getCurrentSelectedDayTextColor();
+                        } else {
+                            textColor = mCalendarAttr.getCalendarTextColor();
                         }
+                    } else {
+                        textColor = mCalendarAttr.getCalendarTextColor();
                     }
 
                     mDayPaint.setStyle(Paint.Style.FILL);
-                    mDayPaint.setColor(mCalendarTextColor);
+                    mDayPaint.setColor(textColor);
                     if (CalendarUtils.isInactiveDate(aux, mMinDateCalendar, mMaxDateCalendar, mInactiveDays)) {
                         mDayPaint.setAlpha(127);
                     }
@@ -299,8 +303,8 @@ public class CalendarDrawer {
                 boolean isSameDayAsCurrentDay = shouldDrawCurrentDayCircle && (todayDayOfMonth == dayOfMonth);
                 boolean isCurrentSelectedDay = shouldDrawSelectedDayCircle && (selectedDayOfMonth == dayOfMonth);
 
-                if (!mCurrentDayIndicator || mShouldDrawIndicatorsBelowSelectedDays || (!mShouldDrawIndicatorsBelowSelectedDays && !isSameDayAsCurrentDay && !isCurrentSelectedDay)) {
-                    if (mEventIndicatorStyle == CalendarAttr.FILL_LARGE_INDICATOR || mEventIndicatorStyle == NO_FILL_LARGE_INDICATOR) {
+                if (!mCalendarAttr.isCurrentDayIndicator() || mShouldDrawIndicatorsBelowSelectedDays || (!mShouldDrawIndicatorsBelowSelectedDays && !isSameDayAsCurrentDay && !isCurrentSelectedDay)) {
+                    if (mCalendarAttr.getEventIndicatorStyle() == CalendarAttr.FILL_LARGE_INDICATOR || mCalendarAttr.getEventIndicatorStyle() == NO_FILL_LARGE_INDICATOR) {
                         Event event = eventsList.get(0);
                         drawEventIndicatorCircle(canvas, xPosition, yPosition, event.getColor());
                     } else {
@@ -351,7 +355,7 @@ public class CalendarDrawer {
                 boolean isCurrentSelectedDay = shouldDrawSelectedDayCircle && (selectedDayOfMonth == dayOfMonth);
 
                 if (mShouldDrawIndicatorsBelowSelectedDays || (!mShouldDrawIndicatorsBelowSelectedDays && !isSameDayAsCurrentDay && !isCurrentSelectedDay)) {
-                    if (mEventIndicatorStyle == CalendarAttr.FILL_LARGE_INDICATOR || mEventIndicatorStyle == CalendarAttr.NO_FILL_LARGE_INDICATOR) {
+                    if (mCalendarAttr.getEventIndicatorStyle() == CalendarAttr.FILL_LARGE_INDICATOR || mCalendarAttr.getEventIndicatorStyle() == CalendarAttr.NO_FILL_LARGE_INDICATOR) {
                         Event event = eventsList.get(0);
                         drawEventIndicatorCircle(canvas, xPosition, yPosition, event.getColor());
                     } else {
@@ -377,13 +381,13 @@ public class CalendarDrawer {
 
     private void drawEventIndicatorCircle(Canvas canvas, float x, float y, int color) {
         mDayPaint.setColor(color);
-        if (mEventIndicatorStyle == CalendarAttr.SMALL_INDICATOR) {
+        if (mCalendarAttr.getEventIndicatorStyle() == CalendarAttr.SMALL_INDICATOR) {
             mDayPaint.setStyle(Paint.Style.FILL);
             drawCircle(canvas, mSmallIndicatorRadius, x, y);
-        } else if (mEventIndicatorStyle == CalendarAttr.NO_FILL_LARGE_INDICATOR) {
+        } else if (mCalendarAttr.getEventIndicatorStyle() == CalendarAttr.NO_FILL_LARGE_INDICATOR) {
             mDayPaint.setStyle(Paint.Style.STROKE);
             drawDayCircleIndicator(CalendarAttr.NO_FILL_LARGE_INDICATOR, canvas, x, y, color);
-        } else if (mEventIndicatorStyle == CalendarAttr.FILL_LARGE_INDICATOR) {
+        } else if (mCalendarAttr.getEventIndicatorStyle() == CalendarAttr.FILL_LARGE_INDICATOR) {
             drawDayCircleIndicator(CalendarAttr.FILL_LARGE_INDICATOR, canvas, x, y, color);
         }
     }
@@ -409,7 +413,7 @@ public class CalendarDrawer {
             Event event = eventsList.get(j);
             float xStartPosition = xPosition + (mXIndicatorOffset * k);
             if (j == 2) {
-                mDayPaint.setColor(mMultiEventIndicatorColor);
+                mDayPaint.setColor(mCalendarAttr.getMultiEventIndicatorColor());
                 mDayPaint.setStrokeWidth(mMultiDayIndicatorStrokeWidth);
                 canvas.drawLine(xStartPosition - mSmallIndicatorRadius, yPosition, xStartPosition + mSmallIndicatorRadius, yPosition, mDayPaint);
                 canvas.drawLine(xStartPosition, yPosition - mSmallIndicatorRadius, xStartPosition, yPosition + mSmallIndicatorRadius, mDayPaint);
@@ -425,6 +429,6 @@ public class CalendarDrawer {
         mDayPaint.setStyle(Paint.Style.FILL);
         canvas.drawRect(0, 0, width, height, mDayPaint);
         mDayPaint.setStyle(Paint.Style.STROKE);
-        mDayPaint.setColor(mCalendarTextColor);
+        mDayPaint.setColor(mCalendarAttr.getCalendarTextColor());
     }
 }

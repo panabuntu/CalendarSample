@@ -3,13 +3,10 @@ package com.github.buntupana.calendarsample;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -32,27 +29,8 @@ public class GoogleCalendarActivity extends AppCompatActivity {
     private View mDatePikerButton;
     private View mDatePikerArrow;
     private TextView mTitle;
-    private EventsCalendarView mCalendarPageView;
+    private EventsCalendarView mCalendarView;
     private TextView mTextDate;
-
-    private int maxVerticalOffset = 0;
-
-    private final GestureDetector.SimpleOnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener(){
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-
-            if(e1.getAction() == MotionEvent.ACTION_UP && mCurrentRotation != 0 && mCurrentRotation != 90){
-                if(mCurrentRotation > 45){
-                    mAppBarLayout.setExpanded(false, true);
-                } else {
-                    mAppBarLayout.setExpanded(true, true);
-                }
-            }
-            
-            return super.onFling(e1, e2, velocityX, velocityY);
-        }
-    };
-    private GestureDetectorCompat mDetectorCompat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,26 +43,15 @@ public class GoogleCalendarActivity extends AppCompatActivity {
         mDatePikerButton = findViewById(R.id.date_picker_button);
         mDatePikerArrow = findViewById(R.id.date_picker_arrow);
         mTitle = (TextView) findViewById(R.id.title);
-        mCalendarPageView = (EventsCalendarView) findViewById(R.id.calendarView);
+        mCalendarView = (EventsCalendarView) findViewById(R.id.calendarView);
         mTextDate = (TextView) findViewById(R.id.textDate);
 
         setSupportActionBar(mToolbar);
 
-        maxVerticalOffset = mAppBarLayout.getTotalScrollRange();
+        mTitle.setText(mCalendarView.getDateString());
+        mTextDate.setText(new SimpleDateFormat("dd MMM yyyy").format(mCalendarView.getCurrentDate().getTime()));
 
-        mTitle.setText(mCalendarPageView.getDateString());
-        mTextDate.setText(new SimpleDateFormat("dd MMM yyyy").format(mCalendarPageView.getCurrentDate().getTime()));
-
-        mDetectorCompat = new GestureDetectorCompat(this, mGestureListener);
-
-        mCollapsingToolbarLayout.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return false;
-            }
-        });
-
-        mCalendarPageView.setListener(new EventsCalendarViewListener() {
+        mCalendarView.setListener(new EventsCalendarViewListener() {
             @Override
             public void onPageScroll(Date firstDayOfNewPage, int day, String month, String year) {
                 mTitle.setText(month + " " + year);
@@ -108,13 +75,13 @@ public class GoogleCalendarActivity extends AppCompatActivity {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                 int maxVerticalOffset = Math.abs(appBarLayout.getTotalScrollRange());
-                float angle = Math.abs(verticalOffset) * 180 / maxVerticalOffset;
+                float angle = (Math.abs(verticalOffset) * 180 / maxVerticalOffset) + 180;
                 mDatePikerArrow.setRotation(angle);
                 mCurrentRotation = angle;
-                if(angle == 0){
+                if(angle == 180){
                     isExpanded = true;
                     appBarLayout.setActivated(false);
-                } else if (angle == 180) {
+                } else if (angle == 360) {
                     isExpanded = false;
 
                 }
@@ -139,6 +106,8 @@ public class GoogleCalendarActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
             return true;
+        } else if(id == R.id.action_current_day){
+            mCalendarView.setCurrentDate(new Date());
         }
 
         return super.onOptionsItemSelected(item);

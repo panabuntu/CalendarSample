@@ -31,29 +31,24 @@ public class EventsCalendarView extends RelativeLayout {
     private CustomViewPager mPager = null;
     private DynamicViewPagerAdapter mPagerAdapter = null;
 
+    // Calendars
     private Calendar mCurrentCalendar = Calendar.getInstance();
     private final Calendar mPreviousCalendar = Calendar.getInstance();
     private final Calendar mNextCalendar = Calendar.getInstance();
-
+    private Calendar mMinCalendar;
+    private Calendar mMaxCalendar;
     private EventsContainer mEventsContainer;
+    private Locale mLocale = Locale.getDefault();
+    private TimeZone mTimeZone = TimeZone.getDefault();
 
     private int mCalendarUnit = Calendar.MONTH;
-
-    //    private int mCalendarFormat = MONTHLY;
-//    private boolean mDefaultSelectedPresentDay = true;
     private boolean shouldShowMondayAsFirstDay = true;
 
     private EventsCalendarViewListener mListener;
 
-    private Calendar mMinCalendar;
-    private Calendar mMaxCalendar;
-
     private List<Integer> inactiveDays = new ArrayList<>();
 
-    private Locale mLocale = Locale.getDefault();
-    private TimeZone mTimeZone = TimeZone.getDefault();
-
-//    private int mCalendarBackgroundColor;
+    private boolean mFirstInit = true;
 
     //---------------
 
@@ -85,7 +80,7 @@ public class EventsCalendarView extends RelativeLayout {
         mPager = new CustomViewPager(getContext());
         mPager.setAdapter(mPagerAdapter);
 
-        setCurrentDate(new Date());
+        setCalendars();
 
         if (mMinCalendar == null || mMinCalendar.get(mCalendarUnit) < mCurrentCalendar.get(mCalendarUnit)) {
             mPagerAdapter.addView(getView(mPreviousCalendar.getTime(), false), mPagerAdapter.getCount());
@@ -103,7 +98,7 @@ public class EventsCalendarView extends RelativeLayout {
         mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (mPager.getCurrentItem() == position && positionOffset == 0 && positionOffsetPixels == 0) {
+                if (mPager.getCurrentItem() == position && positionOffset == 0 && positionOffsetPixels == 0 && !mFirstInit) {
                     if (position == 0 && !isMinDateLimitReached()) {
 
                         mPreviousCalendar.add(mCalendarUnit, -1);
@@ -134,6 +129,7 @@ public class EventsCalendarView extends RelativeLayout {
                         }
                     }
                 }
+                mFirstInit = false;
             }
 
             @Override
@@ -155,6 +151,7 @@ public class EventsCalendarView extends RelativeLayout {
         mPagerAdapter = null;
         mPager = null;
         removeViewAt(0);
+        mFirstInit = true;
         init();
     }
 
@@ -185,7 +182,16 @@ public class EventsCalendarView extends RelativeLayout {
         return mCurrentCalendar.getTime();
     }
 
-    public void setCurrentDate(Date date) {
+    public void setCurrentDate(Date date){
+        setCalendars(date);
+        refresh();
+    }
+
+    private void setCalendars(){
+        setCalendars(new Date());
+    }
+
+    private void setCalendars(Date date) {
 
         mCurrentCalendar = CalendarUtils.getCalendar(date, shouldShowMondayAsFirstDay, mTimeZone, mLocale);
 
@@ -318,16 +324,6 @@ public class EventsCalendarView extends RelativeLayout {
         // passing null will not re-init density related values - and that's ok
     }
 
-    /**
-     * see {@link #addEvent(Event, boolean)} when adding single events
-     * or {@link #addEvents(java.util.List)}  when adding multiple events
-     *
-     * @param event
-     */
-    @Deprecated
-    public void addEvent(Event event) {
-        addEvent(event, false);
-    }
 
     /**
      * Adds an event to be drawn as an indicator in the calendar.

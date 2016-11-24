@@ -91,8 +91,15 @@ public class EventsCalendarPageView extends View {
     private List<Integer> mInactiveDaysList = new ArrayList<>();
     private CalendarDrawer mCalendarDrawer;
 
-    private SimpleDateFormat sdfMonth = new SimpleDateFormat("MMM");
-    private SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
+    private SimpleDateFormat sdfMonth;
+    private SimpleDateFormat sdfYear;
+
+    //---------------
+
+    private SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy");
+    private SimpleDateFormat sdf2 = new SimpleDateFormat("dd MMM yyyy");
+
+    //---------------
 
     private final GestureDetector.SimpleOnGestureListener mGesturelistener = new GestureDetector.SimpleOnGestureListener() {
         @Override
@@ -148,6 +155,8 @@ public class EventsCalendarPageView extends View {
         mListener = listener;
         mCalendarAttr = calendarAttr;
         mShouldSelect = shouldSelect;
+        sdfMonth = new SimpleDateFormat("MMM", locale);
+        sdfYear = new SimpleDateFormat("yyyy", locale);
 
         init(context);
     }
@@ -155,12 +164,16 @@ public class EventsCalendarPageView extends View {
     public EventsCalendarPageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mCalendarAttr = new CalendarAttr(context, attrs);
+        sdfMonth = new SimpleDateFormat("MMM", Locale.getDefault());
+        sdfYear = new SimpleDateFormat("yyyy", Locale.getDefault());
         init(context);
     }
 
     public EventsCalendarPageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mCalendarAttr = new CalendarAttr(context, attrs);
+        sdfMonth = new SimpleDateFormat("MMM", Locale.getDefault());
+        sdfYear = new SimpleDateFormat("yyyy", Locale.getDefault());
         init(context);
     }
 
@@ -218,12 +231,10 @@ public class EventsCalendarPageView extends View {
         mTodayCalendar = CalendarUtils.initCalendar(sShouldShowMondayAsFirstDay, mTimeZone, mLocale);
 
         mCalendarDrawer = new CalendarDrawer(mHeightPerDay, mPaddingHeight, mWidthPerDay, mPaddingWidth, mPaddingRight, mPaddingLeft,
-                mScreenDensity, mDayPaint, mCalendarAttr.getCalendarTextColor(), mCalendarAttr.isCurrentDayIndicator(), mCalendarAttr.getCurrentDayIndicatorStyle(),
-                mCalendarAttr.getCurrentSelectedDayIndicatorStyle(),
-                mCalendarAttr.getCurrentSelectedDayBackgroundColor(), mCalendarAttr.getCurrentDayBackgroundColor(), mBigCircleIndicatorRadius, mEventsContainer,
+                mScreenDensity, mDayPaint, mBigCircleIndicatorRadius, mEventsContainer,
                 mShouldDrawDaysHeader, mTodayCalendar, mInactiveDaysList, dayColumnNames, mEventsCalendar, mShouldDrawIndicatorsBelowSelectedDays,
-                mTextHeight, mCalendarAttr.getEventIndicatorStyle(), mSmallIndicatorRadius, mCalendarAttr.getMultiEventIndicatorColor(), mMultiDayIndicatorStrokeWidth,
-                mMinDateCalendar, mMaxDateCalendar, sShouldShowMondayAsFirstDay, mXIndicatorOffset);
+                mTextHeight, mSmallIndicatorRadius, mMultiDayIndicatorStrokeWidth,
+                mMinDateCalendar, mMaxDateCalendar, sShouldShowMondayAsFirstDay, mXIndicatorOffset, mCalendarAttr);
 
         mCalendarDrawer.drawCalendarBackground(canvas, mCalendarAttr.getCalendarBackgroundColor(), mWidth, mHeight);
         if (mCalendarAttr.getCalendarFormat() == MONTHLY) {
@@ -451,6 +462,8 @@ public class EventsCalendarPageView extends View {
         this.mLocale = locale;
         this.mTimeZone = timeZone;
         this.mEventsContainer = new EventsContainer(Calendar.getInstance(this.mTimeZone, this.mLocale), mCalendarAttr.getCalendarFormat());
+        sdfMonth = new SimpleDateFormat("MMM", locale);
+        sdfYear = new SimpleDateFormat("yyyy", locale);
         // passing null will not re-init density related values - and that's ok
         init(null);
     }

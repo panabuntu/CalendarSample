@@ -34,8 +34,10 @@ public class CalendarAttr {
     // Colors
     private int mMultiEventIndicatorColor;
     private int mCurrentDayBackgroundColor;
+    private int mCurrentDayTextColor;
     private int mCalendarTextColor;
     private int mCurrentSelectedDayBackgroundColor;
+    private int mCurrentSelectedDayTextColor;
     private int mCalendarBackgroundColor;
 
 
@@ -51,8 +53,10 @@ public class CalendarAttr {
             TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.EventsCalendarView, 0, 0);
             try {
                 mCurrentDayBackgroundColor = typedArray.getColor(R.styleable.EventsCalendarView_eventsCalendarCurrentDayBackgroundColor, mCurrentDayBackgroundColor);
+                mCurrentDayTextColor = typedArray.getColor(R.styleable.EventsCalendarView_eventsCalendarCurrentDayTextColor, mCalendarTextColor);
                 mCalendarTextColor = typedArray.getColor(R.styleable.EventsCalendarView_eventsCalendarTextColor, mCalendarTextColor);
                 mCurrentSelectedDayBackgroundColor = typedArray.getColor(R.styleable.EventsCalendarView_eventsCalendarCurrentSelectedDayBackgroundColor, mCurrentSelectedDayBackgroundColor);
+                mCurrentSelectedDayTextColor = typedArray.getColor(R.styleable.EventsCalendarView_eventsCalendarCurrentSelectedDayTextColor, mCalendarTextColor);
                 mCalendarBackgroundColor = typedArray.getColor(R.styleable.EventsCalendarView_eventsCalendarBackgroundColor, mCalendarBackgroundColor);
                 mMultiEventIndicatorColor = typedArray.getColor(R.styleable.EventsCalendarView_eventsCalendarMultiEventIndicatorColor, mMultiEventIndicatorColor);
                 mTextSize = typedArray.getDimensionPixelSize(R.styleable.EventsCalendarView_eventsCalendarTextSize, context.getResources().getDimensionPixelSize(R.dimen.textSize));
@@ -159,6 +163,14 @@ public class CalendarAttr {
         mCurrentDayBackgroundColor = currentDayBackgroundColor;
     }
 
+    public int getCurrentDayTextColor() {
+        return mCurrentDayTextColor;
+    }
+
+    public void setCurrentDayTextColor(int currentDayTextColor) {
+        mCurrentDayTextColor = currentDayTextColor;
+    }
+
     public int getCalendarTextColor() {
         return mCalendarTextColor;
     }
@@ -173,6 +185,14 @@ public class CalendarAttr {
 
     public void setCurrentSelectedDayBackgroundColor(int currentSelectedDayBackgroundColor) {
         mCurrentSelectedDayBackgroundColor = currentSelectedDayBackgroundColor;
+    }
+
+    public int getCurrentSelectedDayTextColor() {
+        return mCurrentSelectedDayTextColor;
+    }
+
+    public void setCurrentSelectedDayTextColor(int currentSelectedDayTextColor) {
+        mCurrentSelectedDayTextColor = currentSelectedDayTextColor;
     }
 
     public int getCalendarBackgroundColor() {
