@@ -11,7 +11,6 @@ import com.github.buntupana.eventscalendarview.events.EventsContainer;
 import com.github.buntupana.eventscalendarview.listeners.EventsCalendarViewListener;
 import com.github.buntupana.eventscalendarview.utils.CalendarUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -49,13 +48,6 @@ public class EventsCalendarView extends RelativeLayout {
     private List<Integer> inactiveDays = new ArrayList<>();
 
     private boolean mFirstInit = true;
-
-    //---------------
-
-    private SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy");
-    private SimpleDateFormat sdf2 = new SimpleDateFormat("dd MMM yyyy");
-
-    //---------------
 
     public EventsCalendarView(Context context) {
         super(context);
@@ -182,7 +174,7 @@ public class EventsCalendarView extends RelativeLayout {
         return mCurrentCalendar.getTime();
     }
 
-    public void setCurrentDate(Date date){
+    public void setSelectedDate(Date date){
         setCalendars(date);
         refresh();
     }

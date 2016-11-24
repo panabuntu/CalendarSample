@@ -17,6 +17,10 @@
     <color name="toolbarIconColor">#777777</color>
     <color name="statusbarcolor">#F5F5F5</color>
 
+    <!-- Events colors -->
+    <color name="eventColor1">#009688</color>
+    <color name="eventColor2">#039BE5</color>
+    <color name="eventColor3">#8E24AA</color>
 
     <color name="status_expected">#f89406</color>
     <color name="status_fully_approved">#22be5b</color>

@@ -47,7 +47,7 @@ public class CalendarAttr {
         mCurrentSelectedDayBackgroundColor = ContextCompat.getColor(context, R.color.currentSelectedDayColor);
         mCurrentDayBackgroundColor = ContextCompat.getColor(context, R.color.currentDayColor);
         mCalendarTextColor = ContextCompat.getColor(context, R.color.textColor);
-        mMultiEventIndicatorColor = ContextCompat.getColor(context, R.color.multiIndicatorColor);
+        mMultiEventIndicatorColor = mCalendarTextColor;
 
         if (attrs != null && context != null) {
             TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.EventsCalendarView, 0, 0);

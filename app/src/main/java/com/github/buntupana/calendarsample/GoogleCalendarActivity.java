@@ -2,7 +2,7 @@ package com.github.buntupana.calendarsample;
 
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -11,26 +11,28 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.github.buntupana.eventscalendarview.EventsCalendarView;
+import com.github.buntupana.eventscalendarview.domain.Event;
 import com.github.buntupana.eventscalendarview.listeners.EventsCalendarViewListener;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class GoogleCalendarActivity extends AppCompatActivity {
 
     private final String TAG = GoogleCalendarActivity.class.getSimpleName();
 
     private boolean isExpanded = false;
-    private float mCurrentRotation = 360.0f;
 
     private AppBarLayout mAppBarLayout;
-    private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private Toolbar mToolbar;
     private View mDatePikerButton;
     private View mDatePikerArrow;
     private TextView mTitle;
     private EventsCalendarView mCalendarView;
     private TextView mTextDate;
+    private Calendar mCalendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +40,6 @@ public class GoogleCalendarActivity extends AppCompatActivity {
         setContentView(R.layout.activity_google_calendar);
 
         mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
-        mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mDatePikerButton = findViewById(R.id.date_picker_button);
         mDatePikerArrow = findViewById(R.id.date_picker_arrow);
@@ -49,7 +50,7 @@ public class GoogleCalendarActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
 
         mTitle.setText(mCalendarView.getDateString());
-        mTextDate.setText(new SimpleDateFormat("dd MMM yyyy").format(mCalendarView.getCurrentDate().getTime()));
+        mTextDate.setText(new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(mCalendarView.getCurrentDate().getTime()));
 
         mCalendarView.setListener(new EventsCalendarViewListener() {
             @Override
@@ -77,7 +78,6 @@ public class GoogleCalendarActivity extends AppCompatActivity {
                 int maxVerticalOffset = Math.abs(appBarLayout.getTotalScrollRange());
                 float angle = (Math.abs(verticalOffset) * 180 / maxVerticalOffset) + 180;
                 mDatePikerArrow.setRotation(angle);
-                mCurrentRotation = angle;
                 if(angle == 180){
                     isExpanded = true;
                     appBarLayout.setActivated(false);
@@ -87,6 +87,21 @@ public class GoogleCalendarActivity extends AppCompatActivity {
                 }
             }
         });
+        addEvents();
+    }
+
+    private void addEvents(){
+        mCalendar.setTime(mCalendarView.getCurrentDate());
+        mCalendar.set(Calendar.DAY_OF_MONTH, 3);
+        mCalendarView.addEvent(new Event(ContextCompat.getColor(this, R.color.eventColor1), mCalendar.getTimeInMillis()), true);
+        mCalendar.set(Calendar.DAY_OF_MONTH, 3);
+        mCalendarView.addEvent(new Event(ContextCompat.getColor(this, R.color.eventColor2), mCalendar.getTimeInMillis()), true);
+        mCalendar.set(Calendar.DAY_OF_MONTH, 3);
+        mCalendarView.addEvent(new Event(ContextCompat.getColor(this, R.color.eventColor2), mCalendar.getTimeInMillis()), true);
+        mCalendar.set(Calendar.DAY_OF_MONTH, 25);
+        mCalendarView.addEvent(new Event(ContextCompat.getColor(this, R.color.eventColor3), mCalendar.getTimeInMillis()), true);
+        mCalendar.set(Calendar.DAY_OF_MONTH, 15);
+        mCalendarView.addEvent(new Event(ContextCompat.getColor(this, R.color.eventColor1), mCalendar.getTimeInMillis()), true);
     }
 
     @Override
@@ -107,7 +122,7 @@ public class GoogleCalendarActivity extends AppCompatActivity {
         if (id == R.id.action_refresh) {
             return true;
         } else if(id == R.id.action_current_day){
-            mCalendarView.setCurrentDate(new Date());
+            mCalendarView.setSelectedDate(new Date());
         }
 
         return super.onOptionsItemSelected(item);

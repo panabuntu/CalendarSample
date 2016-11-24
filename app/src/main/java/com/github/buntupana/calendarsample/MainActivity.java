@@ -6,7 +6,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.github.buntupana.eventscalendarview.EventsCalendarView;
@@ -81,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ((Button) findViewById(R.id.button)).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 calendarView.refresh();
@@ -92,7 +91,6 @@ public class MainActivity extends AppCompatActivity {
     private void addEvents(int month, int year) {
         Calendar currentCalender = Calendar.getInstance();
         currentCalender.set(Calendar.DAY_OF_MONTH, 1);
-//        currentCalender.setFirstDayOfWeek(Calendar.MONDAY);
         Date firstDayOfMonth = currentCalender.getTime();
         List<Event> events = new ArrayList<>();
         for (int i = 0; i < 20; i++) {

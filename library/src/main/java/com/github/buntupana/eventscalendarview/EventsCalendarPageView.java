@@ -13,7 +13,6 @@ import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 
 import com.github.buntupana.eventscalendarview.domain.Event;
 import com.github.buntupana.eventscalendarview.events.EventsContainer;
@@ -46,9 +45,7 @@ public class EventsCalendarPageView extends View {
     private boolean mShouldSelect = true;
 
     // Sizes
-//    private int mTextSize = 30;
     private int mTargetHeight;
-
     private int mTextHeight;
     private int mTextWidth;
     private int mHeightPerDay;
@@ -73,7 +70,6 @@ public class EventsCalendarPageView extends View {
     private static boolean sShouldShowMondayAsFirstDay = true;
 
     private Paint mDayPaint = new Paint();
-    private Paint mBackground = new Paint();
 
     // Calendars
     private Calendar mTodayCalendar;
@@ -93,13 +89,6 @@ public class EventsCalendarPageView extends View {
 
     private SimpleDateFormat sdfMonth;
     private SimpleDateFormat sdfYear;
-
-    //---------------
-
-    private SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy");
-    private SimpleDateFormat sdf2 = new SimpleDateFormat("dd MMM yyyy");
-
-    //---------------
 
     private final GestureDetector.SimpleOnGestureListener mGesturelistener = new GestureDetector.SimpleOnGestureListener() {
         @Override
@@ -212,11 +201,6 @@ public class EventsCalendarPageView extends View {
     private void initScreenDensityRelatedValues(Context context) {
         if (context != null) {
             mScreenDensity = context.getResources().getDisplayMetrics().density;
-            final ViewConfiguration configuration = ViewConfiguration
-                    .get(context);
-//            densityAdjustedSnapVelocity = (int) (mScreenDensity * SNAP_VELOCITY_DIP_PER_SECOND);
-//            maximumVelocity = configuration.getScaledMaximumFlingVelocity();
-
             final DisplayMetrics dm = context.getResources().getDisplayMetrics();
             mMultiDayIndicatorStrokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, dm);
         }
@@ -323,6 +307,7 @@ public class EventsCalendarPageView extends View {
 
     void setShouldDrawDaysHeader(boolean shouldDrawDaysHeader) {
         this.mShouldDrawDaysHeader = shouldDrawDaysHeader;
+        invalidate();
     }
 
     public void setCurrentDate(Date currentDate) {

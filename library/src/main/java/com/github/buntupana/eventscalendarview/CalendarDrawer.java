@@ -35,7 +35,7 @@ public class CalendarDrawer {
     private float mBigCircleIndicatorRadius;
     private EventsContainer mEventsContainer;
 
-    private boolean shouldDrmShouldDrawDaysHeaderwDaysHeader;
+    private boolean mShouldDrawDaysHeader;
     private Calendar mTodayCalendar;
     private List<Integer> mInactiveDays;
     private String[] mDayColumnNames;
@@ -70,7 +70,7 @@ public class CalendarDrawer {
         mDayPaint = dayPaint;
         mBigCircleIndicatorRadius = bigCircleIndicatorRadius;
         mEventsContainer = eventsContainer;
-        shouldDrmShouldDrawDaysHeaderwDaysHeader = shouldDrawDaysHeader;
+        mShouldDrawDaysHeader = shouldDrawDaysHeader;
         mTodayCalendar = todayCalendar;
         mInactiveDays = inactiveDays;
         mDayColumnNames = dayColumnNames;
@@ -116,7 +116,7 @@ public class CalendarDrawer {
 
                 if (row == 0) {
                     // first row, so draw the first letter of the day
-                    if (shouldDrmShouldDrawDaysHeaderwDaysHeader) {
+                    if (mShouldDrawDaysHeader) {
                         mDayPaint.setColor(mCalendarAttr.getCalendarTextColor());
                         mDayPaint.setTypeface(Typeface.DEFAULT_BOLD);
                         mDayPaint.setStyle(Paint.Style.FILL);
@@ -202,7 +202,7 @@ public class CalendarDrawer {
 
                 if (row == 0) {
                     // first row, so draw the first letter of the day
-                    if (shouldDrmShouldDrawDaysHeaderwDaysHeader) {
+                    if (mShouldDrawDaysHeader) {
                         mDayPaint.setColor(mCalendarAttr.getCalendarTextColor());
                         mDayPaint.setTypeface(Typeface.DEFAULT_BOLD);
                         mDayPaint.setStyle(Paint.Style.FILL);
