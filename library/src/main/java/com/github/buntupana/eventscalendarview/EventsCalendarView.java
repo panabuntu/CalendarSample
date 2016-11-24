@@ -11,6 +11,7 @@ import com.github.buntupana.eventscalendarview.events.EventsContainer;
 import com.github.buntupana.eventscalendarview.listeners.EventsCalendarViewListener;
 import com.github.buntupana.eventscalendarview.utils.CalendarUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,6 +49,8 @@ public class EventsCalendarView extends RelativeLayout {
     private List<Integer> inactiveDays = new ArrayList<>();
 
     private boolean mFirstInit = true;
+    private SimpleDateFormat sdfMonth;
+    private SimpleDateFormat sdfYear;
 
     public EventsCalendarView(Context context) {
         super(context);
@@ -62,6 +65,9 @@ public class EventsCalendarView extends RelativeLayout {
     }
 
     private void init() {
+
+        sdfMonth = new SimpleDateFormat("MMM", mLocale);
+        sdfYear = new SimpleDateFormat("yyyy", mLocale);
 
         if (mEventsContainer == null) {
             mEventsContainer = new EventsContainer(Calendar.getInstance(), mCalendarAttr.getCalendarFormat());
@@ -116,8 +122,9 @@ public class EventsCalendarView extends RelativeLayout {
                             ((EventsCalendarPageView) mPagerAdapter.getView(position + 1)).selectCurrentDate(false);
                         }
                         if (mListener != null) {
-                            mListener.onPageScroll(mCurrentCalendar.getTime(), mCurrentCalendar.get(Calendar.DAY_OF_MONTH), CalendarUtils.getMonth(mCurrentCalendar, mCalendarAttr.getCalendarFormat(), mLocale),
+                            mListener.onPageScroll(mCurrentCalendar.getTime(), mCurrentCalendar.get(Calendar.WEEK_OF_YEAR), CalendarUtils.getMonth(mCurrentCalendar, mCalendarAttr.getCalendarFormat(), mLocale),
                                     CalendarUtils.getYear(mCurrentCalendar, mCalendarAttr.getCalendarFormat(), mLocale));
+                            mListener.onDayClick(mCurrentCalendar.getTime(), mCurrentCalendar.get(Calendar.DAY_OF_MONTH), sdfMonth.format(mCurrentCalendar.getTime()), sdfYear.format(mCurrentCalendar.getTime()));
                         }
                     }
                 }
@@ -170,16 +177,21 @@ public class EventsCalendarView extends RelativeLayout {
         calendar.set(Calendar.MILLISECOND, 0);
     }
 
-    public Date getCurrentDate(){
+    public Date getCurrentDate() {
         return mCurrentCalendar.getTime();
     }
 
-    public void setSelectedDate(Date date){
+    public void setSelectedDate(Date date, boolean triggerListener) {
         setCalendars(date);
+        if (mListener != null && triggerListener) {
+            mListener.onPageScroll(mCurrentCalendar.getTime(), mCurrentCalendar.get(Calendar.WEEK_OF_YEAR), CalendarUtils.getMonth(mCurrentCalendar, mCalendarAttr.getCalendarFormat(), mLocale),
+                    CalendarUtils.getYear(mCurrentCalendar, mCalendarAttr.getCalendarFormat(), mLocale));
+            mListener.onDayClick(mCurrentCalendar.getTime(), mCurrentCalendar.get(Calendar.DAY_OF_MONTH), sdfMonth.format(mCurrentCalendar.getTime()), sdfYear.format(mCurrentCalendar.getTime()));
+        }
         refresh();
     }
 
-    private void setCalendars(){
+    private void setCalendars() {
         setCalendars(new Date());
     }
 
@@ -246,7 +258,7 @@ public class EventsCalendarView extends RelativeLayout {
             resetHour(mMinCalendar);
         }
 
-        if(maxDate == null) {
+        if (maxDate == null) {
             mMaxCalendar = null;
         } else {
             mMaxCalendar = CalendarUtils.initCalendar(shouldShowMondayAsFirstDay, mTimeZone, mLocale);
@@ -339,7 +351,7 @@ public class EventsCalendarView extends RelativeLayout {
         refresh();
     }
 
-    public String getDateString(){
+    public String getPageTitle() {
         return CalendarUtils.getDate(mCurrentCalendar, mCalendarAttr.getCalendarFormat(), mLocale);
     }
 }

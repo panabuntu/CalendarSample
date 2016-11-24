@@ -49,14 +49,13 @@ public class GoogleCalendarActivity extends AppCompatActivity {
 
         setSupportActionBar(mToolbar);
 
-        mTitle.setText(mCalendarView.getDateString());
+        mTitle.setText(mCalendarView.getPageTitle());
         mTextDate.setText(new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(mCalendarView.getCurrentDate().getTime()));
 
         mCalendarView.setListener(new EventsCalendarViewListener() {
             @Override
-            public void onPageScroll(Date firstDayOfNewPage, int day, String month, String year) {
+            public void onPageScroll(Date dateOfNewPage, int weekOfYear, String month, String year) {
                 mTitle.setText(month + " " + year);
-                mTextDate.setText(day + " " + month + " " + year);
             }
 
             @Override
@@ -122,7 +121,7 @@ public class GoogleCalendarActivity extends AppCompatActivity {
         if (id == R.id.action_refresh) {
             return true;
         } else if(id == R.id.action_current_day){
-            mCalendarView.setSelectedDate(new Date());
+            mCalendarView.setSelectedDate(new Date(), true);
         }
 
         return super.onOptionsItemSelected(item);

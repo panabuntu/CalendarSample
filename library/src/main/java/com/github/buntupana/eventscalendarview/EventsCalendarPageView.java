@@ -90,7 +90,7 @@ public class EventsCalendarPageView extends View {
     private SimpleDateFormat sdfMonth;
     private SimpleDateFormat sdfYear;
 
-    private final GestureDetector.SimpleOnGestureListener mGesturelistener = new GestureDetector.SimpleOnGestureListener() {
+    private final GestureDetector.SimpleOnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
 
@@ -189,7 +189,7 @@ public class EventsCalendarPageView extends View {
         mTextHeight = mTextSizeRect.height() * 3;
         mTextWidth = mTextSizeRect.width() * 2;
 
-        gestureDetector = new GestureDetectorCompat(context, mGesturelistener);
+        gestureDetector = new GestureDetectorCompat(context, mGestureListener);
 
         initScreenDensityRelatedValues(context);
 
@@ -409,10 +409,6 @@ public class EventsCalendarPageView extends View {
         invalidate();
     }
 
-    /**
-     *
-     *
-     */
     public void clearInactiveDays() {
         mInactiveDaysList.clear();
         invalidate();
@@ -479,26 +475,6 @@ public class EventsCalendarPageView extends View {
         checkTargetHeight();
     }
 
-    public void showCalendar() {
-        checkTargetHeight();
-//        animationHandler.openCalendar();
-    }
-
-    public void hideCalendar() {
-        checkTargetHeight();
-//        animationHandler.closeCalendar();
-    }
-
-    public void showCalendarWithAnimation() {
-        checkTargetHeight();
-//        animationHandler.openCalendarWithAnimation();
-    }
-
-    public void hideCalendarWithAnimation() {
-        checkTargetHeight();
-//        animationHandler.closeCalendarWithAnimation();
-    }
-
     public void setMaxDateCalendar(Date maxDate) {
         if (maxDate == null) {
             mMaxDateCalendar = null;
@@ -531,6 +507,7 @@ public class EventsCalendarPageView extends View {
             mTodayCalendar.setFirstDayOfWeek(Calendar.SUNDAY);
             mCurrentCalendar.setFirstDayOfWeek(Calendar.SUNDAY);
         }
+        invalidate();
     }
 
     public void setOnDayClickListener(EventsCalendarPageViewListener listener) {

@@ -39,18 +39,18 @@
                     android:id="@+id/calendarView"
                     android:layout_width="wrap_content"
                     android:layout_height="250dp"
-                    app:eventsCalendarBackgroundColor="@color/backgroundColor"
-                    app:eventsCalendarCurrentDayBackgroundColor="@color/currentDayBackground"
-                    app:eventsCalendarCurrentDayIndicator="true"
-                    app:eventsCalendarCurrentDayIndicatorStyle="fill_large_indicator"
-                    app:eventsCalendarCurrentDayTextColor="@color/currentDayTextColor"
-                    app:eventsCalendarCurrentSelectedDayBackgroundColor="@color/selectedDayBackground"
-                    app:eventsCalendarDefaultSelectedPresentDay="true"
-                    app:eventsCalendarEventIndicatorStyle="small_indicator"
-                    app:eventsCalendarFormat="monthly"
-                    app:eventsCalendarTargetHeight="250dp"
-                    app:eventsCalendarTextColor="@color/textColor"
-                    app:eventsCalendarTextSize="12sp"/>
+                    app:backgroundColor="@color/backgroundColor"
+                    app:currentDayBackgroundColor="@color/currentDayBackground"
+                    app:currentDayIndicator="true"
+                    app:currentDayIndicatorStyle="fill_large_indicator"
+                    app:currentDayTextColor="@color/currentDayTextColor"
+                    app:currentSelectedDayBackgroundColor="@color/selectedDayBackground"
+                    app:defaultSelectedPresentDay="true"
+                    app:eventIndicatorStyle="small_indicator"
+                    app:headerTextColor="@color/headerTextColor"
+                    app:targetHeight="250dp"
+                    app:textColor="@color/textColor"
+                    app:textSize="12sp"/>
 
             </LinearLayout>
 
