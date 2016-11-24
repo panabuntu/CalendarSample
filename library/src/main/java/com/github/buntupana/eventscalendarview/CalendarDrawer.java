@@ -122,7 +122,6 @@ public class CalendarDrawer {
                             mDayPaint.setTypeface(Typeface.DEFAULT_BOLD);
                         }
                         mDayPaint.setStyle(Paint.Style.FILL);
-                        mDayPaint.setColor(mCalendarAttr.getCalendarHeaderTextColor());
                         canvas.drawText(mDayColumnNames[column], xPosition, mPaddingHeight, mDayPaint);
                         mDayPaint.setTypeface(Typeface.DEFAULT);
                     }
@@ -205,10 +204,9 @@ public class CalendarDrawer {
                 if (row == 0) {
                     // first row, so draw the first letter of the day
                     if (mShouldDrawDaysHeader) {
-                        mDayPaint.setColor(mCalendarAttr.getCalendarTextColor());
+                        mDayPaint.setColor(mCalendarAttr.getCalendarHeaderTextColor());
                         mDayPaint.setTypeface(Typeface.DEFAULT_BOLD);
                         mDayPaint.setStyle(Paint.Style.FILL);
-                        mDayPaint.setColor(mCalendarAttr.getCalendarTextColor());
                         canvas.drawText(mDayColumnNames[column], xPosition, mPaddingHeight, mDayPaint);
                         mDayPaint.setTypeface(Typeface.DEFAULT);
                     }

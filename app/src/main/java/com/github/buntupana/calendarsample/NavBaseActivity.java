@@ -1,5 +1,6 @@
 package com.github.buntupana.calendarsample;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.design.widget.NavigationView;
@@ -55,14 +56,12 @@ public class NavBaseActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
+        if (id == R.id.nav_google_calendar && !(this instanceof GoogleCalendarActivity)) {
+            startActivity(new Intent(this, GoogleCalendarActivity.class));
+            finish();
+        } else if (id == R.id.nav_google_calendar_weekly && !(this instanceof GoogleCalendarWeeklyActivity)) {
+            startActivity(new Intent(this, GoogleCalendarWeeklyActivity.class));
+            finish();
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
