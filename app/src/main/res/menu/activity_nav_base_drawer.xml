@@ -8,6 +8,12 @@
         <item
             android:id="@+id/nav_google_calendar_weekly"
             android:title="Google Calendar Weekly"/>
+        <item
+            android:id="@+id/nav_monthly_calendar"
+            android:title="Monthly Calendar"/>
+        <item
+            android:id="@+id/nav_weekly_calendar"
+            android:title="Weekly Calendar"/>
     </group>
 
     <item android:title="Communicate">
@@ -17,9 +23,9 @@
                 android:icon="@drawable/ic_menu_share"
                 android:title="Share"/>
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/nav_info"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Send"/>
+                android:title="Info"/>
         </menu>
     </item>
 

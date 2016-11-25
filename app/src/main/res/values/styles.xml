@@ -15,7 +15,7 @@
 
     <style name="AppTheme.NoActionBar.GoogleCalendar">
         <item name="colorPrimary">@color/backgroundColor</item>
-        <item name="colorPrimaryDark">@color/statusbarcolor</item>
+        <item name="colorPrimaryDark">@color/statusBarColor</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
@@ -36,7 +36,6 @@
         <item name="titleTextAppearance">@style/ToolbarTitleTextAppearance</item>
         <item name="subtitleTextAppearance">@style/ToolbarSubtitleTextAppearance</item>
     </style>
-
 
     <style name="ToolbarTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textColor">@color/colorBlack</item>

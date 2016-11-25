@@ -84,7 +84,6 @@ public class CalendarDrawer {
         mShouldShowMondayAsFirstDay = shouldShowMondayAsFirstDay;
         mXIndicatorOffset = xIndicatorOffset;
         mCalendarAttr = calendarAttr;
-
     }
 
     void drawMonth(Canvas canvas, Calendar monthToDrawCalendar, boolean shouldSelect) {

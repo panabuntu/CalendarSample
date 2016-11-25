@@ -15,7 +15,7 @@
     <color name="textColor">#212121</color>
     <color name="toolbarTextColor">#333333</color>
     <color name="toolbarIconColor">#777777</color>
-    <color name="statusbarcolor">#F5F5F5</color>
+    <color name="statusBarColor">#F5F5F5</color>
     <color name="headerTextColor">#757575</color>
 
     <!-- Events colors -->

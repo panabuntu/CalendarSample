@@ -11,22 +11,23 @@
         <activity
             android:name=".GoogleCalendarActivity"
             android:theme="@style/AppTheme.NoActionBar.GoogleCalendar">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN"/>-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-            <!--</intent-filter>-->
-        </activity>
-        <activity android:name=".MenuActivity">
-        </activity>
-        <activity android:name=".GoogleCalendarWeeklyActivity"
-            android:theme="@style/AppTheme.NoActionBar.GoogleCalendar">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".MenuActivity">
+        </activity>
+        <activity
+            android:name=".GoogleCalendarWeeklyActivity"
+            android:theme="@style/AppTheme.NoActionBar.GoogleCalendar">
+        </activity>
+        <activity android:name=".MonthlyCalendarActivity">
+        </activity>
+        <activity android:name=".WeeklyCalendarActivity">
+        </activity>
+        <activity android:name=".InfoActivity">
         </activity>
     </application>
 

@@ -62,10 +62,16 @@ public class NavBaseActivity extends AppCompatActivity
         } else if (id == R.id.nav_google_calendar_weekly && !(this instanceof GoogleCalendarWeeklyActivity)) {
             startActivity(new Intent(this, GoogleCalendarWeeklyActivity.class));
             finish();
+        } else if (id == R.id.nav_monthly_calendar && !(this instanceof MonthlyCalendarActivity)) {
+            startActivity(new Intent(this, MonthlyCalendarActivity.class));
+            finish();
+        } else if (id == R.id.nav_weekly_calendar && !(this instanceof WeeklyCalendarActivity)) {
+            startActivity(new Intent(this, WeeklyCalendarActivity.class));
+            finish();
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_info) {
+            startActivity(new Intent(this, InfoActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -83,18 +89,6 @@ public class NavBaseActivity extends AppCompatActivity
         ((DrawerLayout) mDrawerLayout).addDrawerListener(drawerToggle);
         drawerToggle.syncState();
 
-//        if (useDrawerToggle() && this instanceof SummaryActivity) { // use the hamburger menu
-//            drawerToggle = new ActionBarDrawerToggle(this, (DrawerLayout) mNavigationBinding.getRoot(), mBaseBinding.toolbar,
-//                    R.string.navigation_drawer_open,
-//                    R.string.navigation_drawer_close);
-//
-//            ((DrawerLayout) mNavigationBinding.getRoot()).addDrawerListener(drawerToggle);
-//            drawerToggle.syncState();
-//        } else if (useToolbar() && getSupportActionBar() != null) {
-//            // Use home/back button instead
-//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        }
-//
 //        setCheckedItem();
     }
 
