@@ -23,11 +23,17 @@
             android:name=".GoogleCalendarWeeklyActivity"
             android:theme="@style/AppTheme.NoActionBar.GoogleCalendar">
         </activity>
-        <activity android:name=".MonthlyCalendarActivity">
+        <activity
+            android:name=".MonthlyCalendarActivity"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".WeeklyCalendarActivity">
+        <activity
+            android:name=".WeeklyCalendarActivity"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".InfoActivity">
+        <activity
+            android:name=".InfoActivity"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
 

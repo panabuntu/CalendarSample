@@ -197,10 +197,18 @@ public class EventsCalendarView extends RelativeLayout {
 
     private void setCalendars(Date date) {
 
-        mCurrentCalendar = CalendarUtils.getCalendar(date, shouldShowMondayAsFirstDay, mTimeZone, mLocale);
-
         if (date != null) {
-            mCurrentCalendar.setTime(date);
+            mCurrentCalendar = CalendarUtils.getCalendar(date, shouldShowMondayAsFirstDay, mTimeZone, mLocale);
+
+            if (mMinCalendar != null && mMinCalendar.getTimeInMillis() > mCurrentCalendar.getTimeInMillis()) {
+                mCurrentCalendar.setTimeInMillis(mMinCalendar.getTimeInMillis());
+            } else if (mMaxCalendar != null && mMaxCalendar.getTimeInMillis() < mCurrentCalendar.getTimeInMillis()) {
+                if (mMinCalendar != null) {
+                    mCurrentCalendar.setTimeInMillis(mMinCalendar.getTimeInMillis());
+                } else {
+                    mCurrentCalendar.setTimeInMillis(mMaxCalendar.getTimeInMillis());
+                }
+            }
             resetHour(mCurrentCalendar);
             mPreviousCalendar.setTimeInMillis(mCurrentCalendar.getTimeInMillis());
             mPreviousCalendar.add(mCalendarUnit, -1);

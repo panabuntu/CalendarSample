@@ -2,6 +2,7 @@ package com.github.buntupana.calendarsample;
 
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -25,12 +26,14 @@ public class GoogleCalendarActivity extends NavBaseActivity {
     private boolean isExpanded = false;
 
     private AppBarLayout mAppBarLayout;
+    private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private Toolbar mToolbar;
     private View mDatePikerButton;
     private View mDatePikerArrow;
     private TextView mTitle;
     private EventsCalendarView mCalendarView;
     private TextView mTextDate;
+
     private Calendar mCalendar = Calendar.getInstance();
 
     @Override
@@ -39,6 +42,7 @@ public class GoogleCalendarActivity extends NavBaseActivity {
         setContentView(R.layout.activity_google_calendar);
 
         mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
+        mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mDatePikerButton = findViewById(R.id.date_picker_button);
         mDatePikerArrow = findViewById(R.id.date_picker_arrow);
@@ -48,8 +52,7 @@ public class GoogleCalendarActivity extends NavBaseActivity {
 
         setSupportActionBar(mToolbar);
 
-                mTitle.setText(mCalendarView.getPageTitle());
-        mTextDate.setText(new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(mCalendarView.getCurrentDate().getTime()));
+
 
         mCalendarView.setListener(new EventsCalendarViewListener() {
             @Override
@@ -71,6 +74,7 @@ public class GoogleCalendarActivity extends NavBaseActivity {
         });
 
         mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                 int maxVerticalOffset = Math.abs(appBarLayout.getTotalScrollRange());
@@ -86,6 +90,9 @@ public class GoogleCalendarActivity extends NavBaseActivity {
             }
         });
         addEvents();
+
+        mTitle.setText(mCalendarView.getPageTitle());
+        mTextDate.setText(new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(mCalendarView.getCurrentDate().getTime()));
     }
 
     private void addEvents() {
